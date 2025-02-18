@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+</head>
+<body>
+
+<header>
+    <h1>Product Details</h1>
+    
+    </header>
+    <div class="back-button-container">
+        <a href="products.html" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back to Products
+        </a>
+    </div>
+<div id="product-container">
+    <div id="loader" class="loader-container">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDV7YHJA0cQiTqJXVWQP0IKjKUIellFz8E",
+        authDomain: "fuzail-inventory.firebaseapp.com",
+        projectId: "fuzail-inventory",
+        storageBucket: "fuzail-inventory.firebasestorage.app",
+        messagingSenderId: "92783887447",
+        appId: "1:92783887447:web:e884309ae85e432d73cf12",
+        measurementId: "G-354CVKGNWK"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function fetchProductDetails() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get("id"); // ✅ Correctly extract product ID
+
+        if (!productId) {
+            document.getElementById("product-container").innerHTML = "<p>Product not found.</p>";
+            return;
+        }
+
+        const productRef = doc(db, "products", productId); // ✅ Correct variable name
+
+        try {
+            const productSnap = await getDoc(productRef);
+
+            if (!productSnap.exists()) {
+                document.getElementById("product-container").innerHTML = "<p>Product details not available.</p>";
+                return;
+            }
+
+            const product = productSnap.data();
+            displayProduct(product, productId); // ✅ Pass productId to function
+        } catch (error) {
+            console.error("Error fetching product details:", error);
+            document.getElementById("product-container").innerHTML = "<p>Error loading product.</p>";
+        }
+    }
+
+    function displayProduct(product, productId) {
+        const container = document.getElementById("product-container");
+        container.innerHTML = `
+            <div class="product-detail">
+                <img src="${product.image}" alt="${product.name}" class="product-image">
+                <div class="product-info">
+                    <h2>${product.name}</h2>
+                    <p>${product.description}</p>
+                    <p><strong>Category:</strong> ${product.category || "N/A"}</p>
+                    <a href="enquiry.html" class="enquiry-link">Enquire Now</a>
+                </div>
+            </div>
+        `;
+    }
+
+    document.addEventListener("DOMContentLoaded", fetchProductDetails);
+</script>
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0px;
+        background-color: #f4f4f4;
+    }
+
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #000000;
+        color: white;
+        padding: 15px;
+    }
+    .back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #6aaaee, #2702f8); /* Gradient Blue */
+    padding: 12px 24px;
+    border-radius: 50px;
+    transition: all 0.3s ease-in-out;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.back-button:hover {
+    background: linear-gradient(135deg, #000000, #000000); /* Darker Gradient */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0);
+}
+
+.back-button i {
+    margin-right: 8px;
+    font-size: 20px;
+}
+
+/* Centering the button */
+.back-button-container {
+    display: flex;
+    justify-content: flex-start;
+    margin: 20px;
+}
+
+    #product-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-detail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .product-image {
+        width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .product-info {
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .enquiry-link {
+        display: inline-block;
+        margin-top: 10px;
+        text-decoration: none;
+        color: white;
+        background-color: #28a745;
+        padding: 8px 12px;
+        border-radius: 5px;
+    }
+</style>
+<footer>
+    <div class="footer-container">
+        <div class="footer-section about">
+            <h3>About BagSite</h3>
+            <p>BagSite offers a wide range of high-quality bags and accessories, blending style with functionality for every occasion.</p>
+        </div>
+        <div class="footer-section links">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="aboutus.html">About Us</a></li>
+
+                <li><a href="clients.html">Clients</a></li>
+                <li><a href="enquiry.html">Enquiry</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </div>
+        <div class="footer-section contact">
+            <h3>Contact Us</h3>
+            <p>Email: info@bagsite.com</p>
+            <p>Phone: +1 (800) 123-4567</p>
+            <p>Address: 123 Bag Street, Mumbai, Maharashtra, India</p>
+        </div>
+        <div class="footer-section social">
+            <h3>Follow Us</h3>
+            <a href="#"><img src="images/facebook-icon.png" alt="Facebook"></a>
+            <a href="#"><img src="images/twitter-icon.png" alt="Twitter"></a>
+            <a href="#"><img src="images/instagram-icon.png" alt="Instagram"></a>
+            <a href="#"><img src="images/linkedin-icon.png" alt="LinkedIn"></a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 BagSite. All rights reserved. | 
+            <a href="/privacy-policy.html">Privacy Policy</a> | 
+            <a href="/terms-of-service.html">Terms of Service</a>
+        </p>
+    </div>
+</footer>
+</body>
+</html>

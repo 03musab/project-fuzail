@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BagSite</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+
+    <!-- jQuery & Slick Carousel -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+    <!-- Slick Carousel CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDV7YHJA0cQiTqJXVWQP0IKjKUIellFz8E",
+            authDomain: "fuzail-inventory.firebaseapp.com",
+            projectId: "fuzail-inventory",
+            storageBucket: "fuzail-inventory.firebasestorage.app",
+            messagingSenderId: "92783887447",
+            appId: "1:92783887447:web:e884309ae85e432d73cf12",
+            measurementId: "G-354CVKGNWK"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Function to Fetch Products from Firestore
+        async function fetchProducts() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "products"));
+                let products = [];
+                querySnapshot.forEach((doc) => {
+                    products.push(doc.data());
+                });
+                displayProducts(products);
+            } catch (error) {
+                console.error("Error fetching products:", error);
+                document.querySelector(".product-slider").innerHTML = "<p>Error loading products. Please try again later.</p>";
+            }
+        }
+
+        // Function to Display Products in HTML
+        function displayProducts(products) {
+            const productContainer = document.querySelector(".product-slider");
+            productContainer.innerHTML = ""; // Clear previous content
+
+            products.forEach((product) => {
+                const productDiv = document.createElement("div");
+                productDiv.className = "product-item";
+                productDiv.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" class="product-image">
+                    <h3>${product.name}</h3>
+                    <p class="product-description">${product.description}</p>
+                    <div class="product-links">
+                <a href="product.html?id=${product.id}" class="product-link">View Details</a>
+                        <a href="enquiry.html" class="enquiry-link">Enquire Now</a>
+                    </div>
+                `;
+                productContainer.appendChild(productDiv);
+            });
+
+            // Initialize Slick Slider after products are loaded
+            $(".product-slider").slick({
+                slidesToShow: 3,  // Show 3 products at a time
+                slidesToScroll: 1,
+                autoplay: true,   // Auto slide
+                autoplaySpeed: 2000, // 2 seconds per slide
+                infinite: true,   // Infinite loop
+                arrows: true,     // Show navigation arrows
+                dots: true,       // Show navigation dots
+                responsive: [
+                    {
+                        breakpoint: 1024,
+                        settings: { slidesToShow: 2 }
+                    },
+                    {
+                        breakpoint: 600,
+                        settings: { slidesToShow: 1 }
+                    }
+                ]
+            });
+        }
+
+        // Fetch products when the page loads
+        fetchProducts();
+    </script>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <h1>BagSite</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="aboutus.html">About Us</a></li>
+
+                    <li><a href="clients.html">Clients</a></li>
+                    <li><a href="enquiry.html">Enquiry</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h2>Welcome To BagSite</h2>
+                <p>Your one-stop destination for high-quality bags and accessories.</p>
+            </div>
+        </section>
+
+        <section class="products">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Our Featured Products</h2>
+                    <a href="products.html" class="back-button">
+                        View All Products<i class="fas fa-arrow-right"></i>
+                    </a>                
+                </div>
+                
+                <!-- Product Slider -->
+                <div class="product-slider"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section about">
+                <h3>About BagSite</h3>
+                <p>BagSite offers a wide range of high-quality bags and accessories, blending style with functionality for every occasion.</p>
+            </div>
+            <div class="footer-section links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="aboutus.html">About Us</a></li>
+
+                    <li><a href="clients.html">Clients</a></li>
+                    <li><a href="enquiry.html">Enquiry</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h3>Contact Us</h3>
+                <p>Email: info@bagsite.com</p>
+                <p>Phone: +1 (800) 123-4567</p>
+                <p>Address: 123 Bag Street, Mumbai, Maharashtra, India</p>
+            </div>
+            <div class="footer-section social">
+                <h3>Follow Us</h3>
+                <a href="#"><img src="images/facebook-icon.png" alt="Facebook"></a>
+                <a href="#"><img src="images/twitter-icon.png" alt="Twitter"></a>
+                <a href="#"><img src="images/instagram-icon.png" alt="Instagram"></a>
+                <a href="#"><img src="images/linkedin-icon.png" alt="LinkedIn"></a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 BagSite. All rights reserved. | 
+                <a href="/privacy-policy.html">Privacy Policy</a> | 
+                <a href="/terms-of-service.html">Terms of Service</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
