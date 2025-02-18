@@ -396,3 +396,107 @@ color: #777;
 font-style: italic;
 font-size: 14px;
 }
+/*contact*/
+
+
+/* Centering the Contact Section */
+.contact-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    background: #f4f4f4; /* Light gray background */
+    padding: 20px;
+}
+
+/* Contact Section */
+.contact-section {
+    background: #ffffff;
+    padding: 40px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    text-align: center;
+}
+
+/* Heading */
+.contact-container h2 {
+    margin-bottom: 10px;
+    color: #222;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.contact-container p {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+/* Contact Info */
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.info-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    color: #333;
+}
+
+.info-box i {
+    font-size: 22px;
+    color: #007bff;
+}
+
+/* Contact Form */
+.contact-form .input-box {
+    margin-bottom: 15px;
+}
+
+.contact-form input, 
+.contact-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.contact-form input:focus, 
+.contact-form textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+.contact-form textarea {
+    height: 120px;
+    resize: none;
+}
+
+/* Submit Button */
+.contact-btn {
+    background: #007bff;
+    color: #fff;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.3s ease;
+    font-weight: bold;
+}
+
+.contact-btn:hover {
+    background: #0056b3;
+    transform: scale(1.03);
+}

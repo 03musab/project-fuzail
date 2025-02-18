@@ -1,3 +1,227 @@
 <!DOCTYPE html>
-<h4>Under Development</h4>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - BagSite</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- 🔹 Popup Styles -->
+    <style>
+        /* Popup Styling */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            z-index: 1000;
+        }
+
+        .popup h3 {
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+
+        .popup button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .popup button:hover {
+            background: #0056b3;
+        }
+
+        /* Overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+         // Firebase configuration
+         const firebaseConfig = {
+            apiKey: "AIzaSyDV7YHJA0cQiTqJXVWQP0IKjKUIellFz8E",
+            authDomain: "fuzail-inventory.firebaseapp.com",
+            projectId: "fuzail-inventory",
+            storageBucket: "fuzail-inventory.firebasestorage.app",
+            messagingSenderId: "92783887447",
+            appId: "1:92783887447:web:e884309ae85e432d73cf12",
+            measurementId: "G-354CVKGNWK"
+        };
+
+        // 🔹 Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector(".contact-form");
+            const popup = document.querySelector(".popup");
+            const overlay = document.querySelector(".overlay");
+
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                const name = document.querySelector("input[name='name']").value.trim();
+                const email = document.querySelector("input[name='email']").value.trim();
+                const message = document.querySelector("textarea[name='message']").value.trim();
+
+                if (!name || !email || !message) {
+                    alert("Please fill in all fields.");
+                    return;
+                }
+
+                try {
+                    await addDoc(collection(db, "contacts"), {
+                        name: name,
+                        email: email,
+                        message: message,
+                        timestamp: new Date()
+                    });
+
+                    // 🔹 Show Popup
+                    popup.style.display = "block";
+                    overlay.style.display = "block";
+
+                    // Reset form after submission
+                    form.reset();
+                } catch (error) {
+                    console.error("Error submitting form:", error);
+                    alert("Error sending message. Try again.");
+                }
+            });
+
+            // Close Popup
+            document.querySelector(".close-popup").addEventListener("click", () => {
+                popup.style.display = "none";
+                overlay.style.display = "none";
+            });
+        });
+    </script>
+</head>
+<body>
+    
+    <header>
+        <div class="container">
+            <h1>BagSite</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="aboutus.html">About Us</a></li>
+                    <li><a href="clients.html">Clients</a></li>
+                    <li><a href="enquiry.html">Enquiry</a></li>
+                    <li><a href="contact.html" class="active">Contact Us</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="contact-wrapper">
+        <section class="contact-section">
+            <div class="contact-container">
+                <h2>Contact Us</h2>
+                <p>Have questions? Reach out to us and we’ll be happy to help.</p>
+
+                <!-- Contact Information -->
+                <div class="contact-info">
+                    <div class="info-box">
+                        <i class="fas fa-envelope"></i>
+                        <span>Email: info@bagsite.com</span>
+                    </div>
+                    <div class="info-box">
+                        <i class="fas fa-phone"></i>
+                        <span>Phone: +1 (800) 123-4567</span>
+                    </div>
+                    <div class="info-box">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>123 Bag Street, Mumbai, Maharashtra, India</span>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <form class="contact-form">
+                    <div class="input-box">
+                        <input type="text" name="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="input-box">
+                        <input type="email" name="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="input-box">
+                        <textarea name="message" placeholder="Your Message" required></textarea>
+                    </div>
+                    <button type="submit" class="contact-btn">Send Message</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- 🔹 Popup Message -->
+    <div class="overlay"></div>
+    <div class="popup">
+        <h3>✔ Message Sent!</h3>
+        <p>Thank you for contacting us. We'll get back to you soon.</p>
+        <button class="close-popup">OK</button>
+    </div>
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section about">
+                <h3>About BagSite</h3>
+                <p>BagSite offers a wide range of high-quality bags and accessories, blending style with functionality for every occasion.</p>
+            </div>
+            <div class="footer-section links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="aboutus.html">About Us</a></li>
+
+                    <li><a href="clients.html">Clients</a></li>
+                    <li><a href="enquiry.html">Enquiry</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h3>Contact Us</h3>
+                <p>Email: info@bagsite.com</p>
+                <p>Phone: +1 (800) 123-4567</p>
+                <p>Address: 123 Bag Street, Mumbai, Maharashtra, India</p>
+            </div>
+            <div class="footer-section social">
+                <h3>Follow Us</h3>
+                <a href="#"><img src="images/facebook-icon.png" alt="Facebook"></a>
+                <a href="#"><img src="images/twitter-icon.png" alt="Twitter"></a>
+                <a href="#"><img src="images/instagram-icon.png" alt="Instagram"></a>
+                <a href="#"><img src="images/linkedin-icon.png" alt="LinkedIn"></a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 BagSite. All rights reserved. | 
+                <a href="/privacy-policy.html">Privacy Policy</a> | 
+                <a href="/terms-of-service.html">Terms of Service</a>
+            </p>
+        </div>
+    </footer>
+
+</body>
 </html>
