@@ -1,3 +1,353 @@
 <!DOCTYPE html>
-<h4>Under Development</h4>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enquiry Form</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+    ></script>
+  </head>
+  <header>
+    <div class="container">
+      <h1>BagSite</h1>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="aboutus.html">About Us</a></li>
+
+          <li><a href="clients.html">Clients</a></li>
+          <li><a href="enquiry.html">Enquiry</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <body>
+    <div class="enquiry-container">
+      <h2>Product Enquiry</h2>
+      <form id="enquiry-form">
+        <input type="text" id="name" placeholder="Your Name" required />
+        <input type="email" id="email" placeholder="Your Email" required />
+        <textarea id="message" placeholder="Your Message" required></textarea>
+
+        <h3>Selected Products:</h3>
+        <p>(Please enter the product name or product ID)</p>
+        <ul id="product-list"></ul>
+        <input type="text" id="product-input" placeholder="Enter product" />
+        <button type="button" onclick="addProduct()">
+          + Click here to add product
+        </button>
+        <ul id="product-list"></ul>
+        <button type="button" onclick="clearProducts()" id="clear-btn">
+          Clear All
+        </button>
+
+        <button type="submit">Submit Enquiry</button>
+      </form>
+    </div>
+
+    <!-- Success Popup -->
+    <div id="success-popup" class="popup">
+      <div class="popup-content">
+        <p>Enquiry submitted successfully!</p>
+        <button onclick="closePopup()">OK</button>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+      // Firebase Configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDV7YHJA0cQiTqJXVWQP0IKjKUIellFz8E",
+        authDomain: "fuzail-inventory.firebaseapp.com",
+        projectId: "fuzail-inventory",
+        storageBucket: "fuzail-inventory.firebasestorage.app",
+        messagingSenderId: "92783887447",
+        appId: "1:92783887447:web:e884309ae85e432d73cf12",
+        measurementId: "G-354CVKGNWK",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // Form Submission Event
+      document
+        .getElementById("enquiry-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const name = document.getElementById("name").value;
+          const email = document.getElementById("email").value;
+          const message = document.getElementById("message").value;
+          const products = Array.from(
+            document.getElementById("product-list").children
+          ).map((li) => li.textContent.trim());
+
+          if (products.length === 0) {
+            alert("Please add at least one product.");
+            return;
+          }
+
+          try {
+            // Store enquiry in Firestore
+            await addDoc(collection(db, "enquiries"), {
+              name,
+              email,
+              message,
+              products,
+              timestamp: serverTimestamp(),
+            });
+
+            // Send Email using EmailJS
+            // ✅ Move EmailJS Sending Here, Inside the Form Submission Event
+            emailjs
+              .send("service_4i0czvo", "template_xy0xxfs", {
+                name: name, // Ensure data is passed
+                email: email,
+                message: message,
+                products: products.join(", "), // Convert array to string for email
+              })
+              .then((response) => {
+                console.log("Email sent!", response.status, response.text);
+              })
+              .catch((error) => {
+                console.error("Failed to send email", error);
+              });
+
+            // Show success popup and reset form
+            document.getElementById("success-popup").style.display = "block";
+            document.getElementById("enquiry-form").reset();
+            document.getElementById("product-list").innerHTML = "";
+          } catch (error) {
+            console.error("Error:", error);
+            alert("Failed to submit enquiry.");
+          }
+        });
+
+      // Make closePopup function global
+      window.closePopup = function () {
+        document.getElementById("success-popup").style.display = "none";
+      };
+    </script>
+
+    <script>
+      (function () {
+        emailjs.init("8WThPTTK9Ejen_ij7"); // Replace with your EmailJS Public Key
+      })();
+
+      // Function to add product to the list
+      function addProduct() {
+        const productInput = document.getElementById("product-input");
+        const productList = document.getElementById("product-list");
+
+        if (productInput.value.trim() !== "") {
+          const li = document.createElement("li");
+          li.textContent = productInput.value;
+          li.classList.add("product-item");
+          productList.appendChild(li);
+          productInput.value = ""; // Clear input
+        }
+      }
+
+      // Function to clear all products
+      function clearProducts() {
+        document.getElementById("product-list").innerHTML = "";
+      }
+
+      // Attach functions to global `window` object
+      window.addProduct = addProduct;
+      window.clearProducts = clearProducts;
+    </script>
+
+    <style>
+      /* General Styles */
+      body {
+        font-family: "Arial", sans-serif;
+        background: #f8f9fa;
+        margin: 0;
+        padding: 0;
+        color: #333;
+      }
+
+      .enquiry-container {
+        background: #fff;
+        padding: 30px;
+        max-width: 800px;
+        margin: 50px auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .enquiry-container:hover {
+        transform: scale(1.02);
+      }
+
+      h2 {
+        text-align: center;
+        color: #007bff;
+        margin-bottom: 20px;
+      }
+
+      input,
+      textarea,
+      button {
+        width: 100%;
+        margin: 5px 0px;
+        padding: 5px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+
+      input:focus,
+      textarea:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        outline: none;
+      }
+
+      textarea {
+        resize: none;
+        height: 100px;
+      }
+
+      button {
+        background: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s ease;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      /* Product List Styling */
+      #product-list {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      #product-list li {
+        background: #f1f1f1;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      #product-list li button {
+        background: red;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 3px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      /* Success Popup */
+      .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        text-align: center;
+        z-index: 1000;
+      }
+
+      .popup-content button {
+        background: #28a745;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        margin-top: 10px;
+      }
+
+      .popup-content button:hover {
+        background: #218838;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 800px) {
+        .enquiry-container {
+          width: 100%;
+          padding: 20px;
+        }
+
+        input,
+        textarea,
+        button {
+          font-size: 14px;
+        }
+      }
+    </style>
+    <footer>
+      <div class="footer-container">
+        <div class="footer-section about">
+          <h3>About BagSite</h3>
+          <p>
+            BagSite offers a wide range of high-quality bags and accessories,
+            blending style with functionality for every occasion.
+          </p>
+        </div>
+        <div class="footer-section links">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="aboutus.html">About Us</a></li>
+
+            <li><a href="clients.html">Clients</a></li>
+            <li><a href="enquiry.html">Enquiry</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="footer-section contact">
+          <h3>Contact Us</h3>
+          <p>Email: info@bagsite.com</p>
+          <p>Phone: +1 (800) 123-4567</p>
+          <p>Address: 123 Bag Street, Mumbai, Maharashtra, India</p>
+        </div>
+        <div class="footer-section social">
+          <h3>Follow Us</h3>
+          <a href="#"><img src="images/facebook-icon.png" alt="Facebook" /></a>
+          <a href="#"><img src="images/twitter-icon.png" alt="Twitter" /></a>
+          <a href="#"
+            ><img src="images/instagram-icon.png" alt="Instagram"
+          /></a>
+          <a href="#"><img src="images/linkedin-icon.png" alt="LinkedIn" /></a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>
+          &copy; 2025 BagSite. All rights reserved. |
+          <a href="/privacy-policy.html">Privacy Policy</a> |
+          <a href="/terms-of-service.html">Terms of Service</a>
+        </p>
+      </div>
+    </footer>
+  </body>
 </html>

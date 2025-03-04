@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Products</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    
+
         const firebaseConfig = {
             apiKey: "AIzaSyDV7YHJA0cQiTqJXVWQP0IKjKUIellFz8E",
             authDomain: "fuzail-inventory.firebaseapp.com",
@@ -20,406 +22,416 @@
             appId: "1:92783887447:web:e884309ae85e432d73cf12",
             measurementId: "G-354CVKGNWK"
         };
-    
+
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-    
+
         let allProducts = []; // Define globally so it can be accessed anywhere
-    
+
         // Function to Show Loader
         function showLoader() {
             const loader = document.getElementById("loader");
             if (loader) loader.style.display = "flex"; // Show loader when fetching or filtering products
         }
-    
+
         // Function to Hide Loader
         function hideLoader() {
             const loader = document.getElementById("loader");
             if (loader) loader.style.display = "none"; // Hide loader after fetching or filtering products
         }
-    
+
         // Fetching products from the Firestore database
         async function fetchProducts() {
             const productList = document.getElementById("product-list");
-    
+
             showLoader(); // Show loader before fetching products
-    
+
             try {
                 const querySnapshot = await getDocs(collection(db, "products"));
-    
+
                 if (querySnapshot.empty) {
                     productList.innerHTML = "<p>No products available.</p>";
                     hideLoader(); // Hide loader after attempting to fetch
                     return;
                 }
-    
+
                 allProducts = []; // Clear existing products
                 querySnapshot.forEach((doc) => {
                     const product = doc.data();
                     allProducts.push({ id: doc.id, ...product });
                 });
-    
+
                 displayProducts(allProducts); // Show all products initially
             } catch (error) {
                 console.error("Error fetching products: ", error);
                 productList.innerHTML = "<p>Error loading products. Please try again later.</p>";
             }
-    
+
             hideLoader(); // Hide loader after products are displayed
         }
-    
+
         // Function to Display Products on the page
         function displayProducts(products) {
             const productList = document.getElementById("product-list");
             productList.innerHTML = "";
-    
+
             if (products.length === 0) {
                 productList.innerHTML = "<p>No products found.</p>";
                 return;
             }
-    
+
             products.forEach((product) => {
+                const category = product.category || product.Category || "Others"; // Ensure category is fetched
+
                 const productDiv = document.createElement('div');
                 productDiv.className = "product-item";
-                productDiv.dataset.category = product.category || "Others";
+                productDiv.dataset.category = category;
                 productDiv.innerHTML = `
-                    <img src="${product.image}" alt="${product.name}" class="product-image">
-                    <div class="product-info">
-                        <h3>${product.name}</h3>
-                        <p class="product-description">${product.description}</p>
-                        <p class="product-category"><strong>Category:</strong> ${product.category || "N/A"}</p>
-                        <div class="product-links">
-                            <a href="product.html?id=${product.id}" class="product-link">View Details</a>
-                            <a href="enquiry.html?product=${product.id}" class="enquiry-link">Enquire Now</a>
-                        </div>
-                    </div>
-                `;
+        <img src="${product.image}" alt="${product.name}" class="product-image">
+        <div class="product-info">
+            <h3>${product.name}</h3>
+            <p class="product-description">${product.description}</p>
+            <p><strong>Category:</strong> ${category}</p>
+            <div class="product-links">
+                <a href="product.html?id=${product.id}" class="product-link">View Details</a>
+                <a href="enquiry.html?product=${product.id}" class="enquiry-link">Enquire Now</a>
+            </div>
+        </div>
+    `;
                 productList.appendChild(productDiv);
             });
+
         }
-    
+
         // Function to Filter Products
         function filterProducts() {
             showLoader(); // Show loader before filtering
-    
+
             const searchQuery = document.getElementById("searchBox").value.toLowerCase();
             const selectedCategory = document.getElementById("categoryFilter").value;
-    
+
             const filteredProducts = allProducts.filter(product => {
                 const matchesSearch = product.name.toLowerCase().includes(searchQuery);
                 const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
                 return matchesSearch && matchesCategory;
             });
-    
+
             setTimeout(() => {
                 displayProducts(filteredProducts);
                 hideLoader(); // Hide loader after displaying filtered results
             }, 500); // Simulate loading delay for better UX
         }
-    
+
         // Toggle between grid and list view
         function toggleView(view) {
             const productList = document.getElementById("product-list");
             productList.className = view === "grid" ? "product-grid" : "product-list";
         }
-    
+
         // Make sure filterProducts and toggleView are accessible globally
         window.filterProducts = filterProducts;
         window.toggleView = toggleView;  // Make toggleView globally accessible
-    
+
         // Call the function to fetch products when the page loads
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             fetchProducts();
         });
     </script>
-<style>
-    /* Global Styles */
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
-    }
-    
-    /* Header Styles */
-    header {
-        background-color: #000000;
-        color: white;
-        padding: 15px;
-        text-align: center;
-    }
-    
-    /* Controls Styles */
-    .controls {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        padding: 15px;
-    }
-    
-    .controls input,
-    .controls select {
-        padding: 8px;
-        font-size: 16px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-    }
-    
-    .view-btn {
-        padding: 8px 15px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-    }
-    /* Loader Container Styles */
-.loader-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1; /* Ensure it is above other product items */
-    display: none; /* Initially hidden */
-    width: 100%;
-    height: 100%;
-}
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
 
-/* Dot Styles */
-.loader-container .dot {
-    width: 15px;
-    height: 15px;
-    margin: 0 5px;
-    border-radius: 50%;
-    background-color: #007bff;
-    animation: dot-blink 0.8s infinite alternate;
-}
+        /* Header Styles */
+        header {
+            background-color: #000000;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
 
-.loader-container .dot:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.loader-container .dot:nth-child(3) {
-    animation-delay: 0.4s;
-}
-
-/* Animation for Blinking Effect */
-@keyframes dot-blink {
-    0% {
-        opacity: 0.3;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-/* Product Grid Styles */
-.product-grid {
-    position: relative; /* Ensure loader is positioned inside the grid */
-    display: grid;
-    grid-template-columns: repeat(4, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
-}
-
-    .product-item {
-        background-color: white;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
-    }
-    
-    .product-item img {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-        border-radius: 5px;
-    }
-    
-    .product-info {
-        padding: 10px 0;
-    }
-    
-    .product-description {
-        font-size: 14px;
-        color: #555;
-    }
-    
-    .product-category {
-        font-size: 13px;
-        color: #777;
-    }
-    
-    .product-links a {
-        display: inline-block;
-        margin-top: 10px;
-        text-decoration: none;
-        color: white;
-        background-color: #007bff;
-        padding: 8px 12px;
-        border-radius: 5px;
-    }
-    
-    .product-links a.enquiry-link {
-        background-color: #28a745;
-    }
-    
-    /* List View Styles */
-    .product-list {
-        display: block;
-        padding: 20px;
-    }
-    
-    .product-list .product-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        background-color: #fff;
-        padding: 15px;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    
-    .product-list .product-item .product-image {
-        width: 120px;
-        height: 120px;
-        object-fit: cover;
-        margin-right: 15px;
-    }
-    
-    .product-list .product-info {
-        flex-grow: 1;
-    }
-    
-    .product-list .product-info h3 {
-        font-size: 1.2em;
-        margin: 5px 0;
-    }
-    
-    .product-list .product-info p {
-        font-size: 0.9em;
-        color: #666;
-    }
-    
-    .product-list .product-links {
-        margin-top: 10px;
-    }
-    
-    .product-list .product-links a {
-        font-size: 0.9em;
-    }
-    
-    /* Responsive Styles */
-    @media (max-width: 768px) {
+        /* Controls Styles */
         .controls {
-            flex-direction: column;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+        }
+
+        .controls input,
+        .controls select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .view-btn {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        /* Loader Container Styles */
+        .loader-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
             align-items: center;
-        }
-    
-        .product-grid {
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        }
-    
-        /* Adjust list view on small screens */
-        .product-list .product-item {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-    
-        .product-list .product-item .product-image {
+            z-index: 1;
+            /* Ensure it is above other product items */
+            display: none;
+            /* Initially hidden */
             width: 100%;
-            height: 150px;
-            margin-right: 0;
+            height: 100%;
         }
-    }
-</style>
- <!-- Header Section -->
- <header>
-    <div class="container">
-        <h1>BagSite</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="products.html">Products</a></li>
-                <li><a href="aboutus.html">About Us</a></li>
 
-                <li><a href="clients.html">Clients</a></li>
-                <li><a href="enquiry.html">Enquiry</a></li>
-                <li><a href="contact.html">Contact Us</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
- <!-- Filters & View Controls -->
- <section class="controls">
-    <input type="text" id="searchBox" placeholder="Search products..." oninput="filterProducts()">
-    <select id="categoryFilter" onchange="filterProducts()">
-        <option value="all">All Categories</option>
-        <option value="Bags">Bags</option>
-        <option value="Accessories">Accessories</option>
-        <option value="Travel">Travel</option>
-    </select>
-    <button onclick="toggleView('grid')" class="view-btn">Grid View</button>
-    <button onclick="toggleView('list')" class="view-btn">List View</button>
-</section>
-<!-- Main Content Section -->
-<main>
-    <div class="product-grid" id="product-list">
-        <div id="loader" class="loader-container" style="display: none;">
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
-        </div>
-        
-        <!-- Products will be loaded here dynamically -->
-    </div>
-</main>
+        /* Dot Styles */
+        .loader-container .dot {
+            width: 15px;
+            height: 15px;
+            margin: 0 5px;
+            border-radius: 50%;
+            background-color: #007bff;
+            animation: dot-blink 0.8s infinite alternate;
+        }
 
-<!-- Footer Section -->
-<footer>
-    <div class="footer-container">
-        <div class="footer-section about">
-            <h3>About BagSite</h3>
-            <p>BagSite offers a wide range of high-quality bags and accessories, blending style with functionality for every occasion.</p>
-        </div>
-        <div class="footer-section links">
-            <h3>Quick Links</h3>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="products.html">Products</a></li>
-                <li><a href="aboutus.html">About Us</a></li>
+        .loader-container .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
 
-                <li><a href="clients.html">Clients</a></li>
-                <li><a href="enquiry.html">Enquiry</a></li>
-                <li><a href="contact.html">Contact Us</a></li>
-            </ul>
+        .loader-container .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        /* Animation for Blinking Effect */
+        @keyframes dot-blink {
+            0% {
+                opacity: 0.3;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Product Grid Styles */
+        .product-grid {
+            position: relative;
+            /* Ensure loader is positioned inside the grid */
+            display: grid;
+            grid-template-columns: repeat(4, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .product-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .product-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .product-info {
+            padding: 10px 0;
+        }
+
+        .product-description {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .product-category {
+            font-size: 13px;
+            color: #777;
+        }
+
+        .product-links a {
+            display: inline-block;
+            margin-top: 10px;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            padding: 8px 12px;
+            border-radius: 5px;
+        }
+
+        .product-links a.enquiry-link {
+            background-color: #28a745;
+        }
+
+        /* List View Styles */
+        .product-list {
+            display: block;
+            padding: 20px;
+        }
+
+        .product-list .product-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            padding: 15px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-list .product-item .product-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .product-list .product-info {
+            flex-grow: 1;
+        }
+
+        .product-list .product-info h3 {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+        .product-list .product-info p {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .product-list .product-links {
+            margin-top: 10px;
+        }
+
+        .product-list .product-links a {
+            font-size: 0.9em;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            /* Adjust list view on small screens */
+            .product-list .product-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .product-list .product-item .product-image {
+                width: 100%;
+                height: 150px;
+                margin-right: 0;
+            }
+        }
+    </style>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <h1>BagSite</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="aboutus.html">About Us</a></li>
+
+                    <li><a href="clients.html">Clients</a></li>
+                    <li><a href="enquiry.html">Enquiry</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </nav>
         </div>
-        <div class="footer-section contact">
-            <h3>Contact Us</h3>
-            <p>Email: info@bagsite.com</p>
-            <p>Phone: +1 (800) 123-4567</p>
-            <p>Address: 123 Bag Street, Mumbai, Maharashtra, India</p>
+    </header>
+    <!-- Filters & View Controls -->
+    <section class="controls">
+        <input type="text" id="searchBox" placeholder="Search products..." oninput="filterProducts()">
+        <select id="categoryFilter" onchange="filterProducts()">
+            <option value="all">All Categories</option>
+            <option value="Bags">Bags</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Travel">Travel</option>
+        </select>
+        <button onclick="toggleView('grid')" class="view-btn">Grid View</button>
+        <button onclick="toggleView('list')" class="view-btn">List View</button>
+    </section>
+    <!-- Main Content Section -->
+    <main>
+        <div class="product-grid" id="product-list">
+            <div id="loader" class="loader-container" style="display: none;">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+
+            <!-- Products will be loaded here dynamically -->
         </div>
-        <div class="footer-section social">
-            <h3>Follow Us</h3>
-            <a href="#"><img src="images/facebook-icon.png" alt="Facebook"></a>
-            <a href="#"><img src="images/twitter-icon.png" alt="Twitter"></a>
-            <a href="#"><img src="images/instagram-icon.png" alt="Instagram"></a>
-            <a href="#"><img src="images/linkedin-icon.png" alt="LinkedIn"></a>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section about">
+                <h3>About BagSite</h3>
+                <p>BagSite offers a wide range of high-quality bags and accessories, blending style with functionality
+                    for every occasion.</p>
+            </div>
+            <div class="footer-section links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="aboutus.html">About Us</a></li>
+
+                    <li><a href="clients.html">Clients</a></li>
+                    <li><a href="enquiry.html">Enquiry</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h3>Contact Us</h3>
+                <p>Email: info@bagsite.com</p>
+                <p>Phone: +1 (800) 123-4567</p>
+                <p>Address: 123 Bag Street, Mumbai, Maharashtra, India</p>
+            </div>
+            <div class="footer-section social">
+                <h3>Follow Us</h3>
+                <a href="#"><img src="images/facebook-icon.png" alt="Facebook"></a>
+                <a href="#"><img src="images/twitter-icon.png" alt="Twitter"></a>
+                <a href="#"><img src="images/instagram-icon.png" alt="Instagram"></a>
+                <a href="#"><img src="images/linkedin-icon.png" alt="LinkedIn"></a>
+            </div>
         </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; 2025 BagSite. All rights reserved. | 
-            <a href="/privacy-policy.html">Privacy Policy</a> | 
-            <a href="/terms-of-service.html">Terms of Service</a>
-        </p>
-    </div>
-</footer>
+        <div class="footer-bottom">
+            <p>&copy; 2025 BagSite. All rights reserved. |
+                <a href="/privacy-policy.html">Privacy Policy</a> |
+                <a href="/terms-of-service.html">Terms of Service</a>
+            </p>
+        </div>
+    </footer>
 </body>
 </body>
+
 </html>

@@ -72,19 +72,27 @@
     }
 
     function displayProduct(product, productId) {
-        const container = document.getElementById("product-container");
-        container.innerHTML = `
-            <div class="product-detail">
-                <img src="${product.image}" alt="${product.name}" class="product-image">
-                <div class="product-info">
-                    <h2>${product.name}</h2>
-                    <p>${product.description}</p>
-                    <p><strong>Category:</strong> ${product.category || "N/A"}</p>
-                    <a href="enquiry.html" class="enquiry-link">Enquire Now</a>
-                </div>
-            </div>
-        `;
+    const container = document.getElementById("product-container");
+    if (!container) {
+        console.error("Error: product-container not found!");
+        return;
     }
+
+    const category = product.category || product.Category || "N/A"; // Ensure case sensitivity
+
+    container.innerHTML = `
+        <div class="product-detail">
+            <img src="${product.image}" alt="${product.name}" class="product-image">
+            <div class="product-info">
+                <h2>${product.name}</h2>
+                <p>${product.description}</p>
+                <p><strong>Category:</strong> ${category}</p>
+                <a href="enquiry.html?product=${productId}" class="enquiry-link">Enquire Now</a>
+            </div>
+        </div>
+    `;
+}
+
 
     document.addEventListener("DOMContentLoaded", fetchProductDetails);
 </script>
