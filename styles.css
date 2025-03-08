@@ -12,6 +12,7 @@ body {
     color: #333;
     line-height: 1.6;
 }
+
 /* 🔹 WhatsApp Floating Button */
 .whatsapp-float {
     position: fixed;
@@ -44,6 +45,36 @@ body {
     padding: 0 20px; /* Add padding for better spacing */
     box-sizing: border-box; /* Important for consistent sizing */
 }
+.logo-title {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Space between logo and title */
+    justify-content: flex-start; /* Ensures the logo and title are aligned left */
+}
+
+.logo {
+    width: 90px; /* Adjust size as needed */
+    height: auto; /* Maintain aspect ratio */
+    margin-left: -20px; /* Adjust the negative value to move the logo further left */
+    border-radius: 50%; /* Optional: rounded shape */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for better visibility */
+}
+
+.title {
+    color: #fff;
+}
+
+.title h1 {
+    font-size: 2em;
+    margin: 0;
+}
+
+.tagline {
+    font-size: 0.9em;
+    font-style: italic;
+    color: #ccc; /* Softer color for tagline */
+}
+
 
 /* Header styling */
 header {
