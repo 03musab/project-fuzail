@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BagSite</title>
+    <title>FZ Creation Bags</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
@@ -20,6 +20,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // Firebase configuration
         const firebaseConfig = {
@@ -35,20 +36,24 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Function to Fetch Products from Firestore
-        async function fetchProducts() {
-            try {
-                const querySnapshot = await getDocs(collection(db, "products"));
-                let products = [];
-                querySnapshot.forEach((doc) => {
-                    products.push(doc.data());
-                });
-                displayProducts(products);
-            } catch (error) {
-                console.error("Error fetching products:", error);
-                document.querySelector(".product-slider").innerHTML = "<p>Error loading products. Please try again later.</p>";
-            }
-        }
+async function fetchProducts() {
+    try {
+        const productsRef = collection(db, "products");
+        const q = query(productsRef, where("featured", "==", true)); // Fetch only featured products
+        const querySnapshot = await getDocs(q);
+        
+        let products = [];
+        querySnapshot.forEach((doc) => {
+            products.push(doc.data());
+        });
+
+        displayProducts(products);
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        document.querySelector(".product-slider").innerHTML = "<p>Error loading products.</p>";
+    }
+}
+
 
         // Function to Display Products in HTML
         function displayProducts(products) {
@@ -101,24 +106,27 @@
 <a href="https://wa.me/+917715976706" class="whatsapp-float" target="_blank">
     <i class="fab fa-whatsapp"></i>
 </a>
-
-    <!-- Header Section -->
-    <header>
-        <div class="container">
-            <h1>BagSite</h1>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="products.html">Products</a></li>
-                    <li><a href="aboutus.html">About Us</a></li>
-
-                    <li><a href="clients.html">Clients</a></li>
-                    <li><a href="enquiry.html">Enquiry</a></li>
-                    <li><a href="contact.html">Contact Us</a></li>
-                </ul>
-            </nav>
+<header>
+    <div class="container">
+        <div class="logo-title">
+            <img src="logo.png" alt="FZ Creation Bags Logo" class="logo">
+            <div class="title">
+                <h1>FZ Creation Bags</h1>
+                <span>Precision. Quality. Innovation</span>
+            </div>
         </div>
-    </header>
+        <nav aria-label="Main Navigation">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="aboutus.html">About Us</a></li>
+                <li><a href="enquiry.html">Enquiry</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
 
     <!-- Main Content Section -->
     <main>
@@ -157,8 +165,6 @@
                     <li><a href="index.html">Home</a></li>
                     <li><a href="products.html">Products</a></li>
                     <li><a href="aboutus.html">About Us</a></li>
-
-                    <li><a href="clients.html">Clients</a></li>
                     <li><a href="enquiry.html">Enquiry</a></li>
                     <li><a href="contact.html">Contact Us</a></li>
                 </ul>
@@ -166,8 +172,8 @@
             <div class="footer-section contact">
                 <h3>Contact Us</h3>
                 <p>Email: info@bagsite.com</p>
-                <p>Phone: +1 (800) 123-4567</p>
-                <p>Address: 123 Bag Street, Mumbai, Maharashtra, India</p>
+                <p>Phone: +91 77159 76706</p>
+                <p>Address: Sion Dharavi, Mumbai, Maharashtra, India</p>
             </div>
             <div class="footer-section social">
                 <h3>Follow Us</h3>
