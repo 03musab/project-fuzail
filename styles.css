@@ -38,6 +38,17 @@ body {
     background-color: #1ebe57;
 }
 
+/* Mobile menu transition using transform instead of right property */
+.mobile-menu {
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform: translateX(100%); /* Initially off-screen */
+    will-change: transform; /* Optimize for animation */
+}
+
+.mobile-menu.active {
+    transform: translateX(0); /* Slide in from right */
+}
+
 /* Style the container to center content and set a max width */
 .container {
     max-width: 1200px; /* Set a reasonable max-width */
@@ -50,6 +61,8 @@ body {
     align-items: center;
     gap: 20px; /* Space between logo and title */
     justify-content: flex-start; /* Ensures the logo and title are aligned left */
+    flex-wrap: nowrap; /* Prevent wrapping on smaller screens */
+    transition: all 0.3s ease; /* Smooth transition for responsive changes */
 }
 
 .logo {
@@ -62,33 +75,45 @@ body {
 
 .title {
     color: #fff;
+    transition: all 0.3s ease; /* Smooth transition for responsive changes */
 }
 
 .title h1 {
     font-size: 2em;
     margin: 0;
+    line-height: 1.2; /* Improve readability */
+    letter-spacing: 0.5px; /* Slightly increase letter spacing for better readability */
 }
 
 .tagline {
     font-size: 0.9em;
     font-style: italic;
     color: #ccc; /* Softer color for tagline */
+    transition: all 0.3s ease; /* Smooth transition for responsive changes */
+    max-width: 100%; /* Ensure it doesn't overflow on small screens */
 }
 
 
-/* Header styling */
+/* Header styling - Ensuring consistency across all pages */
 header {
     background: #000000;
     color: #fff;
     padding: 20px 0; /* Adjust padding as needed */
     border-bottom: #77aaff 3px solid;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    text-align: left !important; /* Ensure left alignment overrides any inline styles */
 }
 
-/* Center the header content */
+/* Center the header content - Ensuring consistency across all pages */
 header .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-right: 15px; /* Add padding for navigation */
+    width: 100%;
+    text-align: left !important; /* Ensure left alignment overrides any inline styles */
 }
 
 /* Style the site title */
@@ -111,6 +136,14 @@ nav a { /*Removed ul from nav a*/
     color: #fff;
     text-decoration: none;
     font-weight: bold;
+    padding: 8px 12px; /* Add padding for better touch targets */
+    border-radius: 4px; /* Rounded corners for better visual feedback */
+    transition: background-color 0.2s ease; /* Smooth hover transition */
+}
+
+nav a:hover {
+    text-decoration: none; /* Remove underline on hover */
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle background on hover */
 }
 
 nav a:hover {
@@ -140,6 +173,17 @@ nav a:hover {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+    text-align: left !important; /* Ensure consistent alignment */
+    padding: 20px 0 !important; /* Override any inline padding */
+}
+
+/* Additional rule to target any headers in products.html */
+.products .section-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    text-align: left !important;
+    padding: 20px 0 !important;
 }
 
 .section-header h2 {
@@ -165,6 +209,7 @@ nav a:hover {
     background: linear-gradient(135deg, #0056b3, #004085); /* Darker Blue */
     transform: translateY(-3px);
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    will-change: transform; /* Optimize for animation */
 }
 
 .back-button:focus {
@@ -189,6 +234,11 @@ nav a:hover {
     justify-content: center;
     align-items: center;
     height: 80px;
+    pointer-events: none; /* Prevent interaction with loader */
+    position: absolute; /* Position absolutely to avoid layout shifts */
+    left: 0;
+    right: 0;
+    z-index: 10;
 }
 
 .dot {
@@ -226,7 +276,6 @@ nav a:hover {
 
 
 .product-item {
-
     background: #fff;
     padding: 15px;
     text-align: center;
@@ -235,9 +284,8 @@ nav a:hover {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     margin-bottom:20px;
     margin: 0 10px; /* Adds space between items */
-    
-
-
+    content-visibility: auto; /* Optimize rendering for off-screen items */
+    contain-intrinsic-size: 0 350px; /* Reserve space for content */
 }
 
 .product-item img {
@@ -246,6 +294,7 @@ nav a:hover {
     object-fit: cover; /* Ensures the image covers the container without distortion */
     margin-bottom: 10px;
     border-radius: 10px; /* Optional: rounded corners */
+    aspect-ratio: 4/3; /* Ensures consistent dimensions and space reservation */
 }
 
 .product-item h3 {
@@ -554,4 +603,353 @@ font-size: 14px;
 .contact-btn:hover {
     background: #0056b3;
     transform: scale(1.03);
+}
+
+/* Responsive Design Media Queries */
+@media (max-width: 768px) {
+    /* Container adjustments */
+    .container {
+        padding: 0 15px;
+    }
+    
+    /* Header adjustments */
+    header {
+        padding: 15px 0;
+    }
+    
+    header .container {
+        flex-wrap: wrap; /* Allow wrapping if needed */
+        gap: 10px; /* Add gap between wrapped elements */
+    }
+    
+    header h1 {
+        font-size: 2em;
+    }
+    
+    .logo {
+        width: 70px;
+    }
+    
+    .title h1 {
+        font-size: 1.7em;
+    }
+    
+    .tagline {
+        font-size: 0.85em; /* Slightly smaller tagline */
+    }
+    
+    /* Navigation adjustments */
+    nav ul {
+        text-align: center;
+        width: 280px; /* Fixed width for consistency with index.html */
+        padding: 60px 0 20px; /* Match padding from index.html */
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+        transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smoother animation */
+    }
+    
+    nav li {
+        margin: 0;
+        padding: 5px 0;
+    }
+    
+    nav a {
+        display: block;
+        padding: 12px 20px; /* Larger touch target */
+        font-size: 18px; /* Larger text for better readability */
+        transition: background-color 0.2s ease, color 0.2s ease;
+        margin: 5px 15px;
+        border-radius: 6px;
+    }
+    
+    nav a:hover, nav a:focus {
+        background-color: rgba(119, 170, 255, 0.2); /* Highlight color on hover */
+    }
+    
+    /* Mobile menu button styling */
+    .mobile-menu-btn {
+        padding: 10px;
+        margin-right: 5px;
+        transition: opacity 0.3s ease;
+    }
+    
+    .mobile-menu-btn:hover {
+        opacity: 0.8;
+    }
+    
+    /* Hamburger icon refinements */
+    .hamburger-icon span {
+        transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    /* Hero section adjustments */
+    .hero {
+        padding: 40px 0;
+    }
+    
+    .hero h2 {
+        font-size: 2.5em;
+    }
+    
+    /* Product section adjustments */
+    .product-slider {
+        max-width: 90%;
+    }
+    
+    .product-item {
+        margin: 0 5px;
+    }
+    
+    .product-item img {
+        height: 180px;
+    }
+    
+    /* Footer adjustments */
+    .footer-section {
+        flex: 1 1 150px;
+        margin: 15px;
+    }
+    
+    /* Team grid adjustments */
+    .team-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    
+    /* Contact section adjustments */
+    .contact-section {
+        padding: 30px;
+    }
+}
+
+/* Add new breakpoint for devices between 576px and 768px */
+@media (max-width: 576px) {
+    /* Adjust layout for small tablets and large phones */
+    header {
+        padding: 12px 0;
+    }
+    
+    header .container {
+        padding: 0 12px;
+    }
+    
+    .logo-title {
+        gap: 10px;
+        margin: 0 auto; /* Center the logo-title container */
+    }
+    
+    .title h1 {
+        font-size: 1.5em;
+    }
+    
+    .tagline {
+        font-size: 0.8em;
+        max-width: 90%; /* Ensure it doesn't overflow */
+    }
+    
+    /* Product slider adjustments */
+    .product-slider {
+        max-width: 95%;
+    }
+    
+    /* Navigation refinements */
+    nav ul {
+        width: 260px; /* Slightly narrower menu */
+    }
+    
+    nav a {
+        padding: 10px 15px;
+        font-size: 16px;
+    }
+    
+    /* Section header adjustments */
+    .section-header {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Container adjustments */
+    .container {
+        padding: 0 10px;
+    }
+    
+    /* Header adjustments */
+    header {
+        padding: 12px 0;
+    }
+    
+    header .container {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px; /* Increase gap between stacked elements */
+    }
+    
+    .logo-title {
+        justify-content: center;
+        margin-bottom: 10px;
+        width: 100%; /* Full width */
+    }
+    
+    .logo {
+        width: 60px;
+        margin-left: 0;
+        margin-right: 10px; /* Add right margin for better spacing */
+    }
+    
+    .title h1 {
+        font-size: 1.4em; /* Slightly smaller for very small screens */
+        text-align: center; /* Ensure text is centered */
+    }
+    
+    .tagline {
+        font-size: 0.75em; /* Smaller tagline for very small screens */
+        text-align: center;
+        margin: 0 auto;
+        max-width: 85%; /* Control width to prevent overflow */
+    }
+    
+    /* Navigation adjustments */
+    nav ul {
+        text-align: center;
+        width: 240px; /* Even narrower for small screens */
+    }
+    
+    nav li {
+        display: block;
+        margin: 8px 0;
+    }
+    
+    nav a {
+        padding: 12px 15px;
+        font-size: 16px;
+        margin: 3px 10px;
+    }
+    
+    /* Hero section adjustments */
+    .hero {
+        padding: 30px 0;
+    }
+    
+    .hero h2 {
+        font-size: 2em;
+        margin-bottom: 15px;
+    }
+    
+    /* WhatsApp floating button adjustments */
+    .whatsapp-float {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    /* Product section adjustments */
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .section-header h2 {
+        margin-bottom: 15px;
+        font-size: 1.7em;
+    }
+    
+    .product-slider {
+        max-width: 100%;
+    }
+    
+    .product-item {
+        padding: 10px;
+    }
+    
+    .product-item img {
+        height: 150px;
+    }
+    
+    .product-item h3 {
+        font-size: 1em;
+    }
+    
+    .product-link, .enquiry-link {
+        padding: 6px 10px;
+        font-size: 12px;
+        margin: 3px 5px;
+    }
+    
+    /* Back button adjustments */
+    .back-button {
+        padding: 10px 20px;
+        font-size: 12px;
+    }
+    
+    /* Footer adjustments */
+    footer {
+        padding: 30px 0;
+    }
+    
+    .footer-container {
+        flex-direction: column;
+    }
+    
+    .footer-section {
+        margin: 10px 0;
+    }
+    
+    /* Team grid adjustments */
+    .team-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Contact section adjustments */
+    .contact-wrapper {
+        height: auto;
+        padding: 40px 10px;
+    }
+    
+    .contact-section {
+        padding: 20px;
+    }
+    
+    .contact-container h2 {
+        font-size: 22px;
+    }
+    
+    .contact-container p {
+        font-size: 14px;
+    }
+    
+    .info-box {
+        font-size: 14px;
+    }
+    
+    .contact-form input, 
+    .contact-form textarea {
+        padding: 10px;
+        font-size: 14px;
+    }
+    
+    .contact-btn {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+}
+
+/* Fade-in animation for scroll effects */
+@keyframes fadeIn { 
+    from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+    } 
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    } 
+}
+
+/* Helper class for fade-in animations */
+.fade-in { 
+    opacity: 0; 
+    animation: fadeIn 1s forwards; 
+    /* Optionally add delay for staggering effects */ 
 }

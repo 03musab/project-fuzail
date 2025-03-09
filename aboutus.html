@@ -10,6 +10,36 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
     />
     <link rel="icon" type="image/png" href="images/logo.jpg" />
+    <style>
+/* Custom Scrollbar Styles */
+body {
+    scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #007bff;
+    border-radius: 10px;
+    border: 3px solid #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0056b3;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #007bff #f1f1f1;
+}
+</style>
   </head>
   <body>
     <!-- Header Section -->
@@ -85,49 +115,42 @@
         </div>
       </section>
     </main>
-    <!-- Footer Section -->
-    <footer>
-      <div class="footer-container">
-        <div class="footer-section about">
-          <h3>About BagSite</h3>
-          <p>
-            FZ Creation Bags offers a wide range of high-quality bags and
-            accessories, blending style with functionality for every occasion.
-          </p>
-        </div>
-        <div class="footer-section links">
-          <h3>Quick Links</h3>
-          <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="products.html">Products</a></li>
-            <li><a href="aboutus.html">About Us</a></li>
-            <li><a href="enquiry.html">Enquiry</a></li>
-            <li><a href="contact.html">Contact Us</a></li>
-          </ul>
-        </div>
-        <div class="footer-section contact">
-          <h3>Contact Us</h3>
-          <p>Email: info@bagsite.com</p>
-          <p>Phone: +1 (800) 123-4567</p>
-          <p>Address: 123 Bag Street, Mumbai, Maharashtra, India</p>
-        </div>
-        <div class="footer-section social">
-          <h3>Follow Us</h3>
-          <a href="#"><img src="images/facebook-icon.png" alt="Facebook" /></a>
-          <a href="#"><img src="images/twitter-icon.png" alt="Twitter" /></a>
-          <a href="#"
-            ><img src="images/instagram-icon.png" alt="Instagram"
-          /></a>
-          <a href="#"><img src="images/linkedin-icon.png" alt="LinkedIn" /></a>
-        </div>
-      </div>
-      <div class="footer-bottom">
+   <!-- Footer Section -->
+   <footer>
+    <div class="footer-container">
+      <div class="footer-section about">
+        <h3>About BagSite</h3>
         <p>
-          &copy; 2025 FZ Creation Bags. All rights reserved. |
-          <a href="/privacy-policy.html">Privacy Policy</a> |
-          <a href="/terms-of-service.html">Terms of Service</a>
+          FZ Creation Bags offers a wide range of high-quality bags and
+          accessories, blending style with functionality for every occasion.
         </p>
       </div>
-    </footer>
+      <div class="footer-section links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="aboutus.html">About Us</a></li>
+          <li><a href="enquiry.html">Enquiry</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-section contact">
+        <h3>Contact Us</h3>
+        <p>Email: info@bagsite.com</p>
+        <p>Phone: +91 77159 76706</p>
+        <p>Address: Sion Dharavi, Mumbai, Maharashtra, India</p>
+      </div>
+     
+    </div>
+    <div class="footer-bottom">
+      <p>
+        &copy; 2025 FZ Creation Bags. All rights reserved. |
+        <a href="privacy-policy.html">Privacy Policy</a> |
+        <a href="terms-of-service.html">Terms of Service</a>
+      </p>
+    </div>
+  </footer>
+  <script src="scroll-fade.js"></script>
   </body>
 </html>

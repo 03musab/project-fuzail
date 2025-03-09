@@ -143,6 +143,27 @@
             fetchProducts();
         });
     </script>
+     <!-- Header Section -->
+     <header>
+        <div class="container">
+          <div class="logo-title">
+            <img src="images/logo.jpg" alt="FZ Creation Bags Logo" class="logo" />
+            <div class="title">
+              <h1>FZ Creation Bags</h1>
+              <span class="tagline">Precision. Quality. Innovation</span>
+            </div>
+          </div>
+          <nav aria-label="Main Navigation">
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="products.html">Products</a></li>
+              <li><a href="aboutus.html">About Us</a></li>
+              <li><a href="enquiry.html">Enquiry</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
     <style>
         /* Global Styles */
         body {
@@ -150,6 +171,34 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom Scrollbar Styles */
+        /* For Webkit browsers (Chrome, Safari, Edge) */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #007bff;
+            border-radius: 10px;
+            border: 3px solid #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0056b3;
+        }
+        
+        /* For Firefox */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #007bff #f1f1f1;
         }
 
         /* Header Styles */
@@ -187,19 +236,22 @@
 
         /* Loader Container Styles */
         .loader-container {
-            position: absolute;
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1;
+            z-index: 10;
             /* Ensure it is above other product items */
             display: none;
             /* Initially hidden */
-            width: 100%;
-            height: 100%;
+            width: 100px;
+            height: 100px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         /* Dot Styles */
@@ -236,7 +288,7 @@
             position: relative;
             /* Ensure loader is positioned inside the grid */
             display: grid;
-            grid-template-columns: repeat(4, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
             padding: 20px;
         }
@@ -335,46 +387,139 @@
             .controls {
                 flex-direction: column;
                 align-items: center;
+                gap: 15px;
+                padding: 15px 10px;
+            }
+            
+            /* Adjust scrollbar for medium screens */
+            ::-webkit-scrollbar {
+                width: 10px;
+            }
+            
+            ::-webkit-scrollbar-thumb {
+                border: 2px solid #f1f1f1;
+            }
+            
+            .controls input,
+            .controls select {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .view-buttons {
+                display: flex;
+                gap: 10px;
+                width: 100%;
+                max-width: 300px;
+                justify-content: space-between;
+            }
+            
+            .view-btn {
+                flex: 1;
+                padding: 10px;
+                font-size: 14px;
             }
 
             .product-grid {
                 grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px;
+                padding: 15px;
             }
 
             /* Adjust list view on small screens */
             .product-list .product-item {
                 flex-direction: column;
                 align-items: flex-start;
+                padding: 12px;
             }
 
             .product-list .product-item .product-image {
                 width: 100%;
                 height: 150px;
                 margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .product-item h3 {
+                font-size: 16px;
+            }
+            
+            .product-description {
+                font-size: 13px;
+            }
+            
+            .product-links a {
+                padding: 6px 10px;
+                font-size: 13px;
+                margin-top: 8px;
+            }
+        }
+        
+        /* Additional breakpoint for very small screens */
+        @media (max-width: 480px) {
+            .product-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 10px;
+                padding: 10px;
+            }
+            
+            /* Adjust scrollbar for small screens */
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+            
+            ::-webkit-scrollbar-thumb {
+                border: 1px solid #f1f1f1;
+            }
+            
+            /* Improve touch scrolling for mobile */
+            .product-grid, .product-list {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .product-item {
+                padding: 10px;
+            }
+            
+            .product-item img {
+                height: 120px;
+            }
+            
+            .product-info {
+                padding: 5px 0;
+            }
+            
+            .product-description {
+                font-size: 12px;
+                margin: 5px 0;
+            }
+            
+            .product-links {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .product-links a {
+                margin: 2px 0;
+                padding: 6px 8px;
+                font-size: 12px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            
+            .loader-container {
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            
+            .loader-container .dot {
+                width: 12px;
+                height: 12px;
+                margin: 0 3px;
             }
         }
     </style>
-    <!-- Header Section -->
-    <header>
-        <div class="container">
-            <div class="logo-title">
-                <img src="images/logo.jpg" alt="FZ Creation Bags Logo" class="logo">
-                <div class="title">
-                    <h1>FZ Creation Bags</h1>
-                    <span class="tagline">Precision. Quality. Innovation</span>
-                </div>
-            </div>
-            <nav aria-label="Main Navigation">
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="products.html">Products</a></li>
-                    <li><a href="aboutus.html">About Us</a></li>
-                    <li><a href="enquiry.html">Enquiry</a></li>
-                    <li><a href="contact.html">Contact Us</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+   
     <!-- Filters & View Controls -->
     <section class="controls">
         <input type="text" id="searchBox" placeholder="Search products..." oninput="filterProducts()">
@@ -384,14 +529,15 @@
             <option value="Accessories">Accessories</option>
             <option value="Travel">Travel</option>
             <option value="Purse">Purse</option>
-
         </select>
-        <button onclick="toggleView('grid')" class="view-btn">Grid View</button>
-        <button onclick="toggleView('list')" class="view-btn">List View</button>
+        <div class="view-buttons">
+            <button onclick="toggleView('grid')" class="view-btn">Grid View</button>
+            <button onclick="toggleView('list')" class="view-btn">List View</button>
+        </div>
     </section>
     <!-- Main Content Section -->
     <main>
-        <div class="product-grid" id="product-list">
+        <div class="product-grid" id="product-list" style="overflow-y: auto; overflow-x: hidden;">
             <div id="loader" class="loader-container" style="display: none;">
                 <span class="dot"></span>
                 <span class="dot"></span>
@@ -423,16 +569,10 @@
             <div class="footer-section contact">
                 <h3>Contact Us</h3>
                 <p>Email: info@bagsite.com</p>
-                <p>Phone: +1 (800) 123-4567</p>
-                <p>Address: 123 Bag Street, Mumbai, Maharashtra, India</p>
+                <p>Phone: +91 77159 76706</p>
+          <p>Address: Sion Dharavi, Mumbai, Maharashtra, India</p>
             </div>
-            <div class="footer-section social">
-                <h3>Follow Us</h3>
-                <a href="#"><img src="images/facebook-icon.png" alt="Facebook"></a>
-                <a href="#"><img src="images/twitter-icon.png" alt="Twitter"></a>
-                <a href="#"><img src="images/instagram-icon.png" alt="Instagram"></a>
-                <a href="#"><img src="images/linkedin-icon.png" alt="LinkedIn"></a>
-            </div>
+           
         </div>
         <div class="footer-bottom">
             <p>&copy; 2025 FZ Creation Bags. All rights reserved. |
@@ -441,7 +581,6 @@
             </p>
         </div>
     </footer>
-</body>
 </body>
 
 </html>

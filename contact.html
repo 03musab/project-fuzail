@@ -61,6 +61,35 @@
         background: rgba(0, 0, 0, 0.5);
         z-index: 999;
       }
+
+      /* Custom Scrollbar Styles */
+      body {
+          scroll-behavior: smooth;
+      }
+
+      ::-webkit-scrollbar {
+          width: 12px;
+      }
+
+      ::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+          background: #007bff;
+          border-radius: 10px;
+          border: 3px solid #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+          background: #0056b3;
+      }
+
+      * {
+          scrollbar-width: thin;
+          scrollbar-color: #007bff #f1f1f1;
+      }
     </style>
 
     <script type="module">
@@ -245,6 +274,7 @@
       <p>Thank you for contacting us. We'll get back to you soon.</p>
       <button class="close-popup">OK</button>
     </div>
+   <!-- Footer Section -->
     <footer>
       <div class="footer-container">
         <div class="footer-section about">
@@ -267,26 +297,19 @@
         <div class="footer-section contact">
           <h3>Contact Us</h3>
           <p>Email: info@bagsite.com</p>
-          <p>Phone: +1 (800) 123-4567</p>
-          <p>Address: 123 Bag Street, Mumbai, Maharashtra, India</p>
+          <p>Phone: +91 77159 76706</p>
+          <p>Address: Sion Dharavi, Mumbai, Maharashtra, India</p>
         </div>
-        <div class="footer-section social">
-          <h3>Follow Us</h3>
-          <a href="#"><img src="images/facebook-icon.png" alt="Facebook" /></a>
-          <a href="#"><img src="images/twitter-icon.png" alt="Twitter" /></a>
-          <a href="#"
-            ><img src="images/instagram-icon.png" alt="Instagram"
-          /></a>
-          <a href="#"><img src="images/linkedin-icon.png" alt="LinkedIn" /></a>
-        </div>
+        
       </div>
       <div class="footer-bottom">
         <p>
           &copy; 2025 FZ Creation Bags. All rights reserved. |
-          <a href="/privacy-policy.html">Privacy Policy</a> |
-          <a href="/terms-of-service.html">Terms of Service</a>
+          <a href="privacy-policy.html">Privacy Policy</a> |
+          <a href="terms-of-service.html">Terms of Service</a>
         </p>
       </div>
     </footer>
+    <script src="scroll-fade.js"></script>
   </body>
 </html>
