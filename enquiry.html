@@ -16,26 +16,7 @@
       src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
     ></script>
   </head>
-  <header>
-    <div class="container">
-      <div class="logo-title">
-        <img src="images/logo.jpg" alt="FZ Creation Bags Logo" class="logo" />
-        <div class="title">
-          <h1>FZ Creation Bags</h1>
-          <span class="tagline">Precision. Quality. Innovation</span>
-        </div>
-      </div>
-      <nav aria-label="Main Navigation">
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="products.html">Products</a></li>
-          <li><a href="aboutus.html">About Us</a></li>
-          <li><a href="enquiry.html">Enquiry</a></li>
-          <li><a href="contact.html">Contact Us</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+
   <body>
     <a
       href="https://wa.me/+917715976706"
@@ -44,28 +25,39 @@
     >
       <i class="fab fa-whatsapp"></i>
     </a>
-    <div class="enquiry-container">
-      <h2>Product Enquiry</h2>
-      <form id="enquiry-form">
-        <input type="text" id="name" placeholder="Your Name" required />
-        <input type="email" id="email" placeholder="Your Email" required />
-        <textarea id="message" placeholder="Your Message" required></textarea>
+    <header>
+      <div class="container">
+        <div class="logo-title">
+          <img src="images/logo.jpg" alt="FZ Creation Bags Logo" class="logo" />
+          <div class="title">
+            <h1>FZ Creation Bags</h1>
+            <span class="tagline">Precision. Quality. Innovation</span>
+          </div>
+        </div>
+        <nav aria-label="Main Navigation">
+          <button
+            class="mobile-menu-btn"
+            aria-label="Toggle menu"
+            aria-expanded="false"
+            aria-controls="main-navigation"
+          >
+            <div class="hamburger-icon">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </button>
+          <ul id="main-navigation" role="menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="aboutus.html">About Us</a></li>
+            <li><a href="enquiry.html">Enquiry</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
 
-        <h3>Selected Products:</h3>
-        <p>(Please enter the product name or product ID)</p>
-        <ul id="product-list"></ul>
-        <input type="text" id="product-input" placeholder="Enter product" />
-        <button type="button" onclick="addProduct()">
-          + Click here to add product
-        </button>
-        <ul id="product-list"></ul>
-        <button type="button" onclick="clearProducts()" id="clear-btn">
-          Clear All
-        </button>
-
-        <button type="submit">Submit Enquiry</button>
-      </form>
-    </div>
 
     <!-- Success Popup -->
     <div id="success-popup" class="popup">
@@ -99,124 +91,221 @@
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
-      // Form Submission Event
-      document
-        .getElementById("enquiry-form")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
-
-          const name = document.getElementById("name").value;
-          const email = document.getElementById("email").value;
-          const message = document.getElementById("message").value;
-          const products = Array.from(
-            document.getElementById("product-list").children
-          ).map((li) => li.textContent.trim());
-
-          if (products.length === 0) {
-            alert("Please add at least one product.");
-            return;
-          }
-
-          try {
-            // Store enquiry in Firestore
-            await addDoc(collection(db, "enquiries"), {
-              name,
-              email,
-              message,
-              products,
-              timestamp: serverTimestamp(),
-            });
-
-            // Send Email using EmailJS
-            // ✅ Move EmailJS Sending Here, Inside the Form Submission Event
-            emailjs
-              .send("service_4i0czvo", "template_xy0xxfs", {
-                name: name, // Ensure data is passed
-                email: email,
-                message: message,
-                products: products.join(", "), // Convert array to string for email
-              })
-              .then((response) => {
-                console.log("Email sent!", response.status, response.text);
-              })
-              .catch((error) => {
-                console.error("Failed to send email", error);
-              });
-
-            // Show success popup and reset form
-            document.getElementById("success-popup").style.display = "block";
-            document.getElementById("enquiry-form").reset();
-            document.getElementById("product-list").innerHTML = "";
-          } catch (error) {
-            console.error("Error:", error);
-            alert("Failed to submit enquiry.");
-          }
-        });
-
-      // Make closePopup function global
-      window.closePopup = function () {
-        document.getElementById("success-popup").style.display = "none";
-      };
-    </script>
-
-    <script>
+      // Initialize EmailJS
       (function () {
         emailjs.init("8WThPTTK9Ejen_ij7"); // Replace with your EmailJS Public Key
       })();
 
-      // Function to add product to the list
-      function addProduct() {
-        const productInput = document.getElementById("product-input");
-        const productList = document.getElementById("product-list");
+      document.addEventListener("DOMContentLoaded", function () {
+        // Form Submission Event
+        const enquiryForm = document.getElementById("enquiry-form");
+        if (enquiryForm) {
+          enquiryForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
 
-        if (productInput.value.trim() !== "") {
-          const li = document.createElement("li");
-          li.textContent = productInput.value;
-          li.classList.add("product-item");
-          productList.appendChild(li);
-          productInput.value = ""; // Clear input
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const message = document.getElementById("message").value.trim();
+            const products = Array.from(
+              document.getElementById("product-list").children
+            ).map((li) => li.textContent.trim());
+
+            if (products.length === 0) {
+              alert("Please add at least one product.");
+              return;
+            }
+
+            try {
+              // Store enquiry in Firestore
+              await addDoc(collection(db, "enquiries"), {
+                name,
+                email,
+                message,
+                products,
+                timestamp: serverTimestamp(),
+              });
+
+              // Send Email using EmailJS
+              try {
+                await emailjs.send("service_4i0czvo", "template_xy0xxfs", {
+                  name,
+                  email,
+                  message,
+                  products: products.join(", "),
+                });
+                console.log("Email sent successfully!");
+              } catch (emailError) {
+                console.error("Failed to send email", emailError);
+              }
+
+              // Show success popup and reset form
+              document.getElementById("success-popup").style.display = "block";
+              enquiryForm.reset();
+              document.getElementById("product-list").innerHTML = "";
+            } catch (error) {
+              console.error("Error submitting enquiry:", error);
+              alert("Failed to submit enquiry.");
+            }
+          });
         }
-      }
 
-      // Function to clear all products
-      function clearProducts() {
-        document.getElementById("product-list").innerHTML = "";
-      }
+        // Function to add product to the list
+        function addProduct() {
+          const productInput = document.getElementById("product-input");
+          const productList = document.getElementById("product-list");
 
-      // Attach functions to global `window` object
-      window.addProduct = addProduct;
-      window.clearProducts = clearProducts;
+          if (productInput.value.trim() !== "") {
+            const li = document.createElement("li");
+            li.textContent = productInput.value;
+            li.classList.add("product-item");
+            productList.appendChild(li);
+            productInput.value = ""; // Clear input
+          }
+        }
+
+        // Function to clear all products
+        function clearProducts() {
+          document.getElementById("product-list").innerHTML = "";
+        }
+
+        // Make functions global
+        window.addProduct = addProduct;
+        window.clearProducts = clearProducts;
+
+        // Close success popup
+        window.closePopup = function () {
+          document.getElementById("success-popup").style.display = "none";
+        };
+      });
     </script>
 
-    <style>
-      /* Custom Scrollbar Styles */
-      body {
-          scroll-behavior: smooth;
-      }
+    <style>/* Custom Scrollbar Styles */
+     
+      
+      /* Mobile Menu Button */
+      .mobile-menu-btn {
+  display: none; /* Will show only on smaller screens via media query */
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+  padding: 10px;
+  z-index: 1001; /* Ensures the button is above other elements */
+  position: absolute; /* Allows manual placement */
+  top: 10px; /* Distance from the top of the screen */
+  right: 15px; /* Distance from the right edge of the screen */
+}
 
-      ::-webkit-scrollbar {
-          width: 12px;
-      }
+/* Style for overlay when the menu is active */
+.menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 999; /* Slightly below the mobile button */
+}
 
-      ::-webkit-scrollbar-track {
-          background: #f1f1f1;
-          border-radius: 10px;
-      }
+.menu-overlay.show {
+  display: block;
+}
 
-      ::-webkit-scrollbar-thumb {
-          background: #007bff;
-          border-radius: 10px;
-          border: 3px solid #f1f1f1;
-      }
+/* Hamburger menu animation */
+.hamburger-icon {
+  position: absolute; /* Allows precise placement within the parent container */
+  top: 10px; /* Distance from the top edge */
+  right: 15px; /* Distance from the right edge */
+  width: 24px;
+  height: 18px;
+  display: inline-block;
+  z-index: 1001; /* Ensures it appears above other elements if needed */
+  cursor: pointer; /* Indicates it's interactive */
+}
 
-      ::-webkit-scrollbar-thumb:hover {
-          background: #0056b3;
-      }
 
-      * {
-          scrollbar-width: thin;
-          scrollbar-color: #007bff #f1f1f1;
-      }
+.hamburger-icon span {
+  display: block;
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  background: white;
+  border-radius: 3px;
+  opacity: 1;
+  left: 0;
+  transform: rotate(0deg);
+  transition: 0.25s ease-in-out;
+}
+
+.hamburger-icon span:nth-child(1) {
+  top: 0px;
+}
+
+.hamburger-icon span:nth-child(2) {
+  top: 8px;
+}
+
+.hamburger-icon span:nth-child(3) {
+  top: 16px;
+}
+
+.hamburger-icon.open span:nth-child(1) {
+  top: 8px;
+  transform: rotate(135deg);
+}
+
+.hamburger-icon.open span:nth-child(2) {
+  opacity: 0;
+  left: -60px;
+}
+
+.hamburger-icon.open span:nth-child(3) {
+  top: 8px;
+  transform: rotate(-135deg);
+}
+
+/* Responsive Media Query */
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block; /* Show only on screens smaller than 768px */
+  }
+
+  nav ul {
+    display: none; /* Initially hidden */
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    width: 280px;
+    height: 100vh;
+    background-color: #000000;
+    z-index: 1000;
+    padding: 60px 0 20px;
+    border-left: #77aaff 3px solid;
+    right: 0;
+    transform: translateX(100%); /* Hidden off-screen */
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
+    will-change: transform;
+  }
+
+  nav ul.show {
+    display: flex;
+    transform: translateX(0); /* Slide-in effect */
+  }
+
+  nav li {
+    margin: 15px 0;
+    text-align: center;
+  }
+
+  nav li a {
+    display: block;
+    padding: 12px 20px;
+    font-size: 18px;
+  }
+}
 
       /* General Styles */
       body {
@@ -226,7 +315,7 @@
         padding: 0;
         color: #333;
       }
-
+      
       .enquiry-container {
         background: #fff;
         padding: 30px;
@@ -236,41 +325,41 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s ease-in-out;
       }
-
+      
       .enquiry-container:hover {
         transform: scale(1.02);
       }
-
+      
       h2 {
         text-align: center;
         color: #007bff;
         margin-bottom: 20px;
       }
-
+      
       input,
       textarea,
       button {
         width: 100%;
         margin: 5px 0px;
-        padding: 5px;
+        padding: 10px;
         border-radius: 10px;
         border: 1px solid #ddd;
         font-size: 16px;
         transition: all 0.3s ease;
       }
-
+      
       input:focus,
       textarea:focus {
         border-color: #007bff;
         box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         outline: none;
       }
-
+      
       textarea {
         resize: none;
         height: 100px;
       }
-
+      
       button {
         background: #007bff;
         color: white;
@@ -279,17 +368,17 @@
         font-weight: bold;
         transition: background 0.3s ease;
       }
-
+      
       button:hover {
         background: #0056b3;
       }
-
+      
       /* Product List Styling */
       #product-list {
         list-style-type: none;
         padding: 0;
       }
-
+      
       #product-list li {
         background: #f1f1f1;
         padding: 10px;
@@ -299,7 +388,7 @@
         justify-content: space-between;
         align-items: center;
       }
-
+      
       #product-list li button {
         background: red;
         color: white;
@@ -308,7 +397,7 @@
         font-size: 12px;
         cursor: pointer;
       }
-
+      
       /* Success Popup */
       .popup {
         display: none;
@@ -323,7 +412,7 @@
         text-align: center;
         z-index: 1000;
       }
-
+      
       .popup-content button {
         background: #28a745;
         color: white;
@@ -331,25 +420,125 @@
         border-radius: 5px;
         margin-top: 10px;
       }
-
+      
       .popup-content button:hover {
         background: #218838;
       }
-
-      /* Responsive Design */
-      @media (max-width: 800px) {
-        .enquiry-container {
-          width: 100%;
-          padding: 20px;
+      
+      /* Responsive Styles */
+      @media (max-width: 768px) {
+        .mobile-menu-btn {
+          display: block;
         }
-
-        input,
-        textarea,
-        button {
-          font-size: 14px;
+      
+        nav ul {
+          display: none;
+          flex-direction: column;
+          position: fixed;
+          top: 0;
+          width: 280px;
+          height: 100vh;
+          background-color: #000000;
+          z-index: 1000;
+          padding: 60px 0 20px;
+          border-left: #77aaff 3px solid;
+          right: 0;
+          transform: translateX(100%);
+          transition: transform 0.3s ease-in-out;
+          overflow-y: auto;
+        }
+      
+        nav ul.show {
+          display: flex;
+          transform: translateX(0);
+        }
+      
+        nav li {
+          margin: 15px 0;
+          text-align: center;
+        }
+      
+        nav li a {
+          display: block;
+          padding: 12px 20px;
+          font-size: 18px;
         }
       }
-    </style>
+      
+      /* Mobile Improvements */
+      @media (max-width: 576px) {
+        .logo-title {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+      
+        .logo {
+          margin-bottom: 10px;
+        }
+      
+        .title h1 {
+          font-size: 24px;
+        }
+      
+        .tagline {
+          font-size: 14px;
+        }
+      
+        .footer-container {
+          grid-template-columns: 1fr;
+        }
+      }
+      body {
+        scroll-behavior: smooth;
+      }
+      
+      ::-webkit-scrollbar {
+        width: 12px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(45deg, #007bff, #0056b3); /* Smoother gradient */
+        border-radius: 10px;
+        border: 3px solid #f1f1f1;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: #0056b3;
+      }
+      
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: #007bff #f1f1f1;
+      }
+  </style>      
+        <div class="enquiry-container">
+          <h2>Product Enquiry</h2>
+          <form id="enquiry-form">
+            <input type="text" id="name" placeholder="Your Name" required />
+            <input type="email" id="email" placeholder="Your Email" required />
+            <textarea id="message" placeholder="Your Message" required></textarea>
+    
+            <h3>Selected Products:</h3>
+            <p>(Please enter the product name or product ID)</p>
+            <ul id="product-list"></ul>
+            <input type="text" id="product-input" placeholder="Enter product" />
+            <button type="button" onclick="addProduct()">
+              + Click here to add product
+            </button>
+            <ul id="product-list"></ul>
+            <button type="button" onclick="clearProducts()" id="clear-btn">
+              Clear All
+            </button>
+    
+            <button type="submit">Submit Enquiry</button>
+          </form>
+        </div>
     <!-- Footer Section -->
     <footer>
       <div class="footer-container">
@@ -376,7 +565,6 @@
           <p>Phone: +91 77159 76706</p>
           <p>Address: Sion Dharavi, Mumbai, Maharashtra, India</p>
         </div>
-        
       </div>
       <div class="footer-bottom">
         <p>
@@ -386,6 +574,141 @@
         </p>
       </div>
     </footer>
+    <!-- Mobile Navigation Script -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const menuBtn = document.querySelector(".mobile-menu-btn");
+        const hamburgerIcon = document.querySelector(".hamburger-icon");
+        const navMenu = document.querySelector("nav ul");
+        const menuOverlay = document.querySelector(".menu-overlay");
+
+        // Function to toggle menu state
+        function toggleMenu() {
+          const isExpanded = menuBtn.getAttribute("aria-expanded") === "true";
+          const newExpandedState = !isExpanded;
+
+          // Update ARIA state
+          menuBtn.setAttribute("aria-expanded", newExpandedState.toString());
+
+          // Toggle visual classes
+          navMenu.classList.toggle("show");
+          hamburgerIcon.classList.toggle("open");
+          menuOverlay.classList.toggle("show");
+          document.querySelector("nav").classList.toggle("active");
+
+          // Prevent body scrolling when menu is open
+          if (newExpandedState) {
+            document.body.style.overflow = "hidden";
+          } else {
+            document.body.style.overflow = "";
+          }
+
+          // Announce menu state for screen readers
+          const menuState = newExpandedState ? "opened" : "closed";
+          menuBtn.setAttribute("aria-label", `Menu ${menuState}`);
+        }
+
+        // Toggle menu on button click
+        menuBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          toggleMenu();
+        });
+
+        // Close menu when clicking on overlay
+        menuOverlay.addEventListener("click", function () {
+          toggleMenu();
+        });
+
+        // Close menu when clicking on a link
+        const navLinks = document.querySelectorAll("nav ul li a");
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function () {
+            if (navMenu.classList.contains("show")) {
+              toggleMenu();
+            }
+          });
+
+          // Add keyboard accessibility for menu items
+          link.setAttribute("role", "menuitem");
+          link.addEventListener("keydown", function (e) {
+            // Close menu on Enter or Space after selecting an item
+            if (
+              (e.key === "Enter" || e.key === " ") &&
+              navMenu.classList.contains("show")
+            ) {
+              e.preventDefault();
+              toggleMenu();
+              // Follow the link after closing menu
+              setTimeout(() => {
+                window.location.href = this.href;
+              }, 300);
+            }
+          });
+        });
+
+        // Handle touch events better for mobile
+        navMenu.addEventListener(
+          "touchstart",
+          function (e) {
+            e.stopPropagation();
+          },
+          { passive: true }
+        );
+
+        // Add swipe to close functionality
+        let touchStartX = 0;
+        navMenu.addEventListener(
+          "touchstart",
+          function (e) {
+            touchStartX = e.changedTouches[0].screenX;
+          },
+          { passive: true }
+        );
+
+        navMenu.addEventListener(
+          "touchend",
+          function (e) {
+            const touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+
+            // If swiped left (for right-side menu)
+            if (diff > 50) {
+              toggleMenu();
+            }
+          },
+          { passive: true }
+        );
+
+        // Adjust menu on window resize
+        window.addEventListener("resize", function () {
+          if (window.innerWidth > 768) {
+            if (navMenu.classList.contains("show")) {
+              toggleMenu(); // Close the menu
+            }
+            // Reset styles for desktop view
+            document.body.style.overflow = "";
+            menuBtn.setAttribute("aria-expanded", "false");
+            menuBtn.setAttribute("aria-label", "Toggle menu");
+          }
+        });
+
+        // Add keyboard navigation support
+        menuBtn.addEventListener("keydown", function (e) {
+          // Toggle on Enter or Space
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggleMenu();
+          }
+        });
+
+        // Allow Escape key to close the menu
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && navMenu.classList.contains("show")) {
+            toggleMenu();
+          }
+        });
+      });
+    </script>
     <script src="scroll-fade.js"></script>
   </body>
 </html>

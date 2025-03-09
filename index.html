@@ -29,38 +29,37 @@
       type="text/css"
       href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"
     />
-    
+
     <!-- Mobile Navigation CSS -->
     <style>
       /* Custom Scrollbar Styles */
       body {
-          scroll-behavior: smooth;
+        scroll-behavior: smooth;
       }
 
       ::-webkit-scrollbar {
-          width: 12px;
+        width: 12px;
       }
 
       ::-webkit-scrollbar-track {
-          background: #f1f1f1;
-          border-radius: 10px;
+        background: #f1f1f1;
+        border-radius: 10px;
       }
 
       ::-webkit-scrollbar-thumb {
-          background: #007bff;
-          border-radius: 10px;
-          border: 3px solid #f1f1f1;
+        background: #007bff;
+        border-radius: 10px;
+        border: 3px solid #f1f1f1;
       }
 
       ::-webkit-scrollbar-thumb:hover {
-          background: #0056b3;
+        background: #0056b3;
       }
 
       * {
-          scrollbar-width: thin;
-          scrollbar-color: #007bff #f1f1f1;
+        scrollbar-width: thin;
+        scrollbar-color: #007bff #f1f1f1;
       }
-
       .mobile-menu-btn {
         display: none;
         background: none;
@@ -70,9 +69,11 @@
         cursor: pointer;
         padding: 10px;
         z-index: 1001;
-        position: relative;
+        position: absolute; /* Change from relative to absolute */
+        top: 10px; /* Adjust to position it from the top */
+        right: 15px; /* Adjust to position it from the right */
       }
-      
+
       .menu-overlay {
         display: none;
         position: fixed;
@@ -83,11 +84,11 @@
         background-color: rgba(0, 0, 0, 0.7);
         z-index: 999;
       }
-      
+
       .menu-overlay.show {
         display: block;
       }
-      
+
       /* Hamburger menu animation */
       .hamburger-icon {
         position: relative;
@@ -95,7 +96,7 @@
         height: 18px;
         display: inline-block;
       }
-      
+
       .hamburger-icon span {
         display: block;
         position: absolute;
@@ -106,41 +107,41 @@
         opacity: 1;
         left: 0;
         transform: rotate(0deg);
-        transition: .25s ease-in-out;
+        transition: 0.25s ease-in-out;
       }
-      
+
       .hamburger-icon span:nth-child(1) {
         top: 0px;
       }
-      
+
       .hamburger-icon span:nth-child(2) {
         top: 8px;
       }
-      
+
       .hamburger-icon span:nth-child(3) {
         top: 16px;
       }
-      
+
       .hamburger-icon.open span:nth-child(1) {
         top: 8px;
         transform: rotate(135deg);
       }
-      
+
       .hamburger-icon.open span:nth-child(2) {
         opacity: 0;
         left: -60px;
       }
-      
+
       .hamburger-icon.open span:nth-child(3) {
         top: 8px;
         transform: rotate(-135deg);
       }
-      
+
       @media (max-width: 768px) {
         .mobile-menu-btn {
           display: block;
         }
-        
+
         nav ul {
           display: none;
           flex-direction: column;
@@ -158,24 +159,24 @@
           overflow-y: auto;
           will-change: transform;
         }
-        
+
         nav ul.show {
           display: flex;
           transform: translateX(0);
         }
-        
+
         nav li {
           margin: 15px 0;
           text-align: center;
         }
-        
+
         nav li a {
           display: block;
           padding: 12px 20px;
           font-size: 18px;
         }
       }
-      
+
       /* Responsive layout improvements */
       @media (max-width: 576px) {
         .logo-title {
@@ -183,19 +184,19 @@
           align-items: center;
           text-align: center;
         }
-        
+
         .logo {
           margin-bottom: 10px;
         }
-        
+
         .title h1 {
           font-size: 24px;
         }
-        
+
         .tagline {
           font-size: 14px;
         }
-        
+
         .footer-container {
           grid-template-columns: 1fr;
         }
@@ -252,24 +253,24 @@
       function displayProducts(products) {
         const productContainer = document.querySelector(".product-slider");
         productContainer.innerHTML = ""; // Clear previous content
-        
+
         // Set initial fixed height to prevent layout shift
-        productContainer.style.height = '400px';
+        productContainer.style.height = "400px";
 
         products.forEach((product) => {
           const productDiv = document.createElement("div");
           productDiv.className = "product-item";
-          
+
           // Create placeholder with fixed height first
           productDiv.innerHTML = `<div class="product-placeholder" style="height: 350px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
             <div class="loading-spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 2s linear infinite;"></div>
           </div>`;
-          
+
           productContainer.appendChild(productDiv);
-          
+
           // Load the actual content
           const img = new Image();
-          img.onload = function() {
+          img.onload = function () {
             productDiv.innerHTML = `
                     <img src="${product.image}" alt="${product.name}" class="product-image" width="100%" height="200px" loading="lazy">
                     <h3>${product.name}</h3>
@@ -285,8 +286,9 @@
 
         // Initialize Slick Slider after products are loaded
         // Add style for spinner animation
-        const style = document.createElement('style');
-        style.textContent = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
+        const style = document.createElement("style");
+        style.textContent =
+          "@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }";
         document.head.appendChild(style);
         $(".product-slider").slick({
           slidesToShow: 3, // Show 3 products at a time
@@ -299,43 +301,43 @@
           responsive: [
             {
               breakpoint: 1200,
-              settings: { 
+              settings: {
                 slidesToShow: 3,
-                arrows: true
-              }
+                arrows: true,
+              },
             },
             {
               breakpoint: 992,
-              settings: { 
+              settings: {
                 slidesToShow: 2,
-                arrows: true
-              }
+                arrows: true,
+              },
             },
             {
               breakpoint: 768,
-              settings: { 
+              settings: {
                 slidesToShow: 2,
                 arrows: false,
-                dots: true
-              }
+                dots: true,
+              },
             },
             {
               breakpoint: 576,
-              settings: { 
+              settings: {
                 slidesToShow: 1,
                 arrows: false,
                 dots: true,
                 centerMode: true,
-                centerPadding: '30px'
-              }
-            }
+                centerPadding: "30px",
+              },
+            },
           ],
         });
-        
+
         // Remove fixed height after slider is initialized to allow proper responsiveness
-        $(window).on('load', function() {
-          setTimeout(function() {
-            productContainer.style.height = '';
+        $(window).on("load", function () {
+          setTimeout(function () {
+            productContainer.style.height = "";
           }, 500);
         });
       }
@@ -364,7 +366,12 @@
           </div>
         </div>
         <nav aria-label="Main Navigation">
-          <button class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-navigation">
+          <button
+            class="mobile-menu-btn"
+            aria-label="Toggle menu"
+            aria-expanded="false"
+            aria-controls="main-navigation"
+          >
             <div class="hamburger-icon">
               <span></span>
               <span></span>
@@ -434,7 +441,7 @@
           <p>Phone: +91 77159 76706</p>
           <p>Address: Sion Dharavi, Mumbai, Maharashtra, India</p>
         </div>
-       
+        
       </div>
       <div class="footer-bottom">
         <p>
@@ -446,63 +453,66 @@
     </footer>
     <!-- Mobile Navigation Script -->
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const menuBtn = document.querySelector('.mobile-menu-btn');
-        const hamburgerIcon = document.querySelector('.hamburger-icon');
-        const navMenu = document.querySelector('nav ul');
-        const menuOverlay = document.querySelector('.menu-overlay');
-        
+      document.addEventListener("DOMContentLoaded", function () {
+        const menuBtn = document.querySelector(".mobile-menu-btn");
+        const hamburgerIcon = document.querySelector(".hamburger-icon");
+        const navMenu = document.querySelector("nav ul");
+        const menuOverlay = document.querySelector(".menu-overlay");
+
         // Function to toggle menu state
         function toggleMenu() {
-          const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
+          const isExpanded = menuBtn.getAttribute("aria-expanded") === "true";
           const newExpandedState = !isExpanded;
-          
+
           // Update ARIA state
-          menuBtn.setAttribute('aria-expanded', newExpandedState.toString());
-          
+          menuBtn.setAttribute("aria-expanded", newExpandedState.toString());
+
           // Toggle visual classes
-          navMenu.classList.toggle('show');
-          hamburgerIcon.classList.toggle('open');
-          menuOverlay.classList.toggle('show');
-          document.querySelector('nav').classList.toggle('active');
-          
+          navMenu.classList.toggle("show");
+          hamburgerIcon.classList.toggle("open");
+          menuOverlay.classList.toggle("show");
+          document.querySelector("nav").classList.toggle("active");
+
           // Prevent body scrolling when menu is open
           if (newExpandedState) {
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow = "hidden";
           } else {
-            document.body.style.overflow = '';
+            document.body.style.overflow = "";
           }
-          
+
           // Announce menu state for screen readers
-          const menuState = newExpandedState ? 'opened' : 'closed';
-          menuBtn.setAttribute('aria-label', `Menu ${menuState}`);
+          const menuState = newExpandedState ? "opened" : "closed";
+          menuBtn.setAttribute("aria-label", `Menu ${menuState}`);
         }
-        
+
         // Toggle menu on button click
-        menuBtn.addEventListener('click', function(e) {
+        menuBtn.addEventListener("click", function (e) {
           e.stopPropagation();
           toggleMenu();
         });
-        
+
         // Close menu when clicking on overlay
-        menuOverlay.addEventListener('click', function() {
+        menuOverlay.addEventListener("click", function () {
           toggleMenu();
         });
-        
+
         // Close menu when clicking on a link
-        const navLinks = document.querySelectorAll('nav ul li a');
-        navLinks.forEach(link => {
-          link.addEventListener('click', function() {
-            if (navMenu.classList.contains('show')) {
+        const navLinks = document.querySelectorAll("nav ul li a");
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function () {
+            if (navMenu.classList.contains("show")) {
               toggleMenu();
             }
           });
-          
+
           // Add keyboard accessibility for menu items
-          link.setAttribute('role', 'menuitem');
-          link.addEventListener('keydown', function(e) {
+          link.setAttribute("role", "menuitem");
+          link.addEventListener("keydown", function (e) {
             // Close menu on Enter or Space after selecting an item
-            if ((e.key === 'Enter' || e.key === ' ') && navMenu.classList.contains('show')) {
+            if (
+              (e.key === "Enter" || e.key === " ") &&
+              navMenu.classList.contains("show")
+            ) {
               e.preventDefault();
               toggleMenu();
               // Follow the link after closing menu
@@ -512,53 +522,65 @@
             }
           });
         });
-        
+
         // Handle touch events better for mobile
-        navMenu.addEventListener('touchstart', function(e) {
-          e.stopPropagation();
-        }, { passive: true });
-        
+        navMenu.addEventListener(
+          "touchstart",
+          function (e) {
+            e.stopPropagation();
+          },
+          { passive: true }
+        );
+
         // Add swipe to close functionality
         let touchStartX = 0;
-        navMenu.addEventListener('touchstart', function(e) {
-          touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-        
-        navMenu.addEventListener('touchend', function(e) {
-          const touchEndX = e.changedTouches[0].screenX;
-          const diff = touchStartX - touchEndX;
-          
-          // If swiped left (for right-side menu)
-          if (diff > 50) {
-            toggleMenu();
-          }
-        }, { passive: true });
-        
+        navMenu.addEventListener(
+          "touchstart",
+          function (e) {
+            touchStartX = e.changedTouches[0].screenX;
+          },
+          { passive: true }
+        );
+
+        navMenu.addEventListener(
+          "touchend",
+          function (e) {
+            const touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+
+            // If swiped left (for right-side menu)
+            if (diff > 50) {
+              toggleMenu();
+            }
+          },
+          { passive: true }
+        );
+
         // Adjust menu on window resize
-        window.addEventListener('resize', function() {
+        window.addEventListener("resize", function () {
           if (window.innerWidth > 768) {
-            if (navMenu.classList.contains('show')) {
+            if (navMenu.classList.contains("show")) {
               toggleMenu(); // Close the menu
             }
             // Reset styles for desktop view
-            document.body.style.overflow = '';
-            menuBtn.setAttribute('aria-expanded', 'false');
-            menuBtn.setAttribute('aria-label', 'Toggle menu');
+            document.body.style.overflow = "";
+            menuBtn.setAttribute("aria-expanded", "false");
+            menuBtn.setAttribute("aria-label", "Toggle menu");
           }
         });
-        
+
         // Add keyboard navigation support
-        menuBtn.addEventListener('keydown', function(e) {
+        menuBtn.addEventListener("keydown", function (e) {
           // Toggle on Enter or Space
-          if (e.key === 'Enter' || e.key === ' ') {
+          if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             toggleMenu();
           }
         });
-        
+
         // Allow Escape key to close the menu
-        document.addEventListener('keydown', function(e) {
-          if (e.key === 'Escape' && navMenu.classList.contains('show')) {
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && navMenu.classList.contains("show")) {
             toggleMenu();
           }
         });
