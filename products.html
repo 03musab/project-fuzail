@@ -1,108 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>All Products</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-    />
-    <link rel="icon" type="image/png" href="images/logo.jpg" />
-  </head>
 
-  <body>
-    <a
-      href="https://wa.me/+917715976706"
-      class="whatsapp-float"
-      target="_blank"
-    >
-      <i class="fab fa-whatsapp"></i>
-    </a>
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-      import {
-        getFirestore,
-        collection,
-        getDocs,
-      } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Products</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link rel="icon" type="image/png" href="images/logo.jpg" />
+</head>
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyDV7YHJA0cQiTqJXVWQP0IKjKUIellFz8E",
-        authDomain: "fuzail-inventory.firebaseapp.com",
-        projectId: "fuzail-inventory",
-        storageBucket: "fuzail-inventory.firebasestorage.app",
-        messagingSenderId: "92783887447",
-        appId: "1:92783887447:web:e884309ae85e432d73cf12",
-        measurementId: "G-354CVKGNWK",
-      };
+<body>
+  <a href="https://wa.me/+917715976706" class="whatsapp-float" target="_blank">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
+    const firebaseConfig = {
+      apiKey: "AIzaSyDV7YHJA0cQiTqJXVWQP0IKjKUIellFz8E",
+      authDomain: "fuzail-inventory.firebaseapp.com",
+      projectId: "fuzail-inventory",
+      storageBucket: "fuzail-inventory.firebasestorage.app",
+      messagingSenderId: "92783887447",
+      appId: "1:92783887447:web:e884309ae85e432d73cf12",
+      measurementId: "G-354CVKGNWK",
+    };
 
-      let allProducts = []; // Define globally so it can be accessed anywhere
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-      // Function to Show Loader
-      function showLoader() {
-        const loader = document.getElementById("loader");
-        if (loader) loader.style.display = "flex"; // Show loader when fetching or filtering products
-      }
+    let allProducts = []; // Define globally so it can be accessed anywhere
 
-      // Function to Hide Loader
-      function hideLoader() {
-        const loader = document.getElementById("loader");
-        if (loader) loader.style.display = "none"; // Hide loader after fetching or filtering products
-      }
+    // Function to Show Loader
+    function showLoader() {
+      const loader = document.getElementById("loader");
+      if (loader) loader.style.display = "flex"; // Show loader when fetching or filtering products
+    }
 
-      // Fetching products from the Firestore database
-      async function fetchProducts() {
-        const productList = document.getElementById("product-list");
+    // Function to Hide Loader
+    function hideLoader() {
+      const loader = document.getElementById("loader");
+      if (loader) loader.style.display = "none"; // Hide loader after fetching or filtering products
+    }
 
-        showLoader(); // Show loader before fetching products
+    // Fetching products from the Firestore database
+    async function fetchProducts() {
+      const productList = document.getElementById("product-list");
 
-        try {
-          const querySnapshot = await getDocs(collection(db, "products"));
+      showLoader(); // Show loader before fetching products
 
-          if (querySnapshot.empty) {
-            productList.innerHTML = "<p>No products available.</p>";
-            hideLoader(); // Hide loader after attempting to fetch
-            return;
-          }
+      try {
+        const querySnapshot = await getDocs(collection(db, "products"));
 
-          allProducts = []; // Clear existing products
-          querySnapshot.forEach((doc) => {
-            const product = doc.data();
-            allProducts.push({ id: doc.id, ...product });
-          });
-
-          displayProducts(allProducts); // Show all products initially
-        } catch (error) {
-          console.error("Error fetching products: ", error);
-          productList.innerHTML =
-            "<p>Error loading products. Please try again later.</p>";
-        }
-
-        hideLoader(); // Hide loader after products are displayed
-      }
-
-      // Function to Display Products on the page
-      function displayProducts(products) {
-        const productList = document.getElementById("product-list");
-        productList.innerHTML = "";
-
-        if (products.length === 0) {
-          productList.innerHTML = "<p>No products found.</p>";
+        if (querySnapshot.empty) {
+          productList.innerHTML = "<p>No products available.</p>";
+          hideLoader(); // Hide loader after attempting to fetch
           return;
         }
 
-        products.forEach((product) => {
-          const category = product.category || product.Category || "Others"; // Ensure category is fetched
+        allProducts = []; // Clear existing products
+        querySnapshot.forEach((doc) => {
+          const product = doc.data();
+          allProducts.push({ id: doc.id, ...product });
+        });
 
-          const productDiv = document.createElement("div");
-          productDiv.className = "product-item";
-          productDiv.dataset.category = category;
-          productDiv.innerHTML = `
+        displayProducts(allProducts); // Show all products initially
+      } catch (error) {
+        console.error("Error fetching products: ", error);
+        productList.innerHTML =
+          "<p>Error loading products. Please try again later.</p>";
+      }
+
+      hideLoader(); // Hide loader after products are displayed
+    }
+
+    // Function to Display Products on the page
+    function displayProducts(products) {
+      const productList = document.getElementById("product-list");
+      productList.innerHTML = "";
+
+      if (products.length === 0) {
+        productList.innerHTML = "<p>No products found.</p>";
+        return;
+      }
+
+      products.forEach((product) => {
+        const category = product.category || product.Category || "Others"; // Ensure category is fetched
+
+        const productDiv = document.createElement("div");
+        productDiv.className = "product-item";
+        productDiv.dataset.category = category;
+        productDiv.innerHTML = `
         <img src="${product.image}" alt="${product.name}" class="product-image">
         <div class="product-info">
             <h3>${product.name}</h3>
@@ -114,790 +104,801 @@
             </div>
         </div>
     `;
-          productList.appendChild(productDiv);
-        });
-      }
-
-      // Function to Filter Products
-      function filterProducts() {
-        showLoader(); // Show loader before filtering
-
-        const searchQuery = document
-          .getElementById("searchBox")
-          .value.toLowerCase();
-        const selectedCategory =
-          document.getElementById("categoryFilter").value;
-
-        const filteredProducts = allProducts.filter((product) => {
-          const matchesSearch = product.name
-            .toLowerCase()
-            .includes(searchQuery);
-          const matchesCategory =
-            selectedCategory === "all" || product.category === selectedCategory;
-          return matchesSearch && matchesCategory;
-        });
-
-        setTimeout(() => {
-          displayProducts(filteredProducts);
-          hideLoader(); // Hide loader after displaying filtered results
-        }, 500); // Simulate loading delay for better UX
-      }
-
-      // Toggle between grid and list view
-      function toggleView(view) {
-        const productList = document.getElementById("product-list");
-        productList.className =
-          view === "grid" ? "product-grid" : "product-list";
-      }
-
-      // Make sure filterProducts and toggleView are accessible globally
-      window.filterProducts = filterProducts;
-      window.toggleView = toggleView; // Make toggleView globally accessible
-
-      // Call the function to fetch products when the page loads
-      document.addEventListener("DOMContentLoaded", function () {
-        fetchProducts();
+        productList.appendChild(productDiv);
       });
-    </script>
-    <!-- Header Section -->
-    <header>
-      <div class="container">
-        <div class="logo-title">
-          <img src="images/logo.jpg" alt="FZ Creation Bags Logo" class="logo" />
-          <div class="title">
-            <h1>FZ Creation Bags</h1>
-            <span class="tagline">Precision. Quality. Innovation</span>
-          </div>
+    }
+
+    // Function to Filter Products
+    function filterProducts() {
+      showLoader(); // Show loader before filtering
+
+      const searchQuery = document
+        .getElementById("searchBox")
+        .value.toLowerCase();
+      const selectedCategory =
+        document.getElementById("categoryFilter").value;
+
+      const filteredProducts = allProducts.filter((product) => {
+        const matchesSearch = product.name
+          .toLowerCase()
+          .includes(searchQuery);
+        const matchesCategory =
+          selectedCategory === "all" || product.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+      });
+
+      setTimeout(() => {
+        displayProducts(filteredProducts);
+        hideLoader(); // Hide loader after displaying filtered results
+      }, 500); // Simulate loading delay for better UX
+    }
+
+    // Toggle between grid and list view
+    function toggleView(view) {
+      const productList = document.getElementById("product-list");
+      productList.className =
+        view === "grid" ? "product-grid" : "product-list";
+    }
+
+    // Make sure filterProducts and toggleView are accessible globally
+    window.filterProducts = filterProducts;
+    window.toggleView = toggleView; // Make toggleView globally accessible
+
+    // Call the function to fetch products when the page loads
+    document.addEventListener("DOMContentLoaded", function () {
+      fetchProducts();
+    });
+  </script>
+  <!-- Header Section -->
+  <header>
+    <div class="container">
+      <div class="logo-title">
+        <img src="images/logo.jpg" alt="FZ Creation Bags Logo" class="logo" />
+        <div class="title">
+          <h1>FZ Creation Bags</h1>
+          <span class="tagline">Precision. Quality. Innovation</span>
         </div>
-        <nav aria-label="Main Navigation">
-          <button
-            class="mobile-menu-btn"
-            aria-label="Toggle menu"
-            aria-expanded="false"
-            aria-controls="main-navigation"
-          >
-            <div class="hamburger-icon">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </button>
-          <ul id="main-navigation" role="menu">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="products.html">Products</a></li>
-            <li><a href="aboutus.html">About Us</a></li>
-            <li><a href="enquiry.html">Enquiry</a></li>
-            <li><a href="contact.html">Contact Us</a></li>
-          </ul>
-        </nav>
       </div>
-    </header>
+      <nav aria-label="Main Navigation">
+        <button class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-navigation">
+          <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </button>
+        <ul id="main-navigation" role="menu">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="aboutus.html">About Us</a></li>
+          <li><a href="enquiry.html">Enquiry</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-    <style>
-      /* Global Styles */
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
-        scroll-behavior: smooth;
-        overflow-x: hidden;
-      }
+  <style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
 
-      /* Mobile Menu Button */
+    /* Mobile Menu Button */
+    .mobile-menu-btn {
+      display: none;
+      /* Visible only on mobile via media query */
+      background: none;
+      border: none;
+      font-size: 20px;
+      /* Slightly smaller font size */
+      color: white;
+      cursor: pointer;
+      padding: 5px;
+      /* Reduced padding for a smaller appearance */
+      z-index: 1010;
+      position: absolute;
+      top: 10px;
+      /* Distance from the top */
+      right: 10px;
+      /* Distance from the right */
+    }
+
+    /* Style for overlay when the menu is active */
+    .menu-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 999;
+      /* Slightly below the mobile button */
+    }
+
+    .menu-overlay.show {
+      display: block;
+    }
+
+    /* Hamburger Icon */
+    .hamburger-icon {
+      position: absolute;
+      /* Ensures proper placement */
+      top: 10px;
+      /* Aligns with the button */
+      right: 15px;
+      /* Aligns with the button */
+      width: 24px;
+      height: 18px;
+      display: inline-block;
+      z-index: 1011;
+      /* Higher than the overlay and other elements */
+      cursor: pointer;
+      /* Shows as interactive */
+    }
+
+    /* Ensure other elements are properly layered */
+    .menu-overlay {
+      z-index: 1005;
+      /* Below the hamburger and mobile button */
+    }
+
+    nav ul {
+      z-index: 1000;
+      /* Positioned below everything else */
+    }
+
+    .hamburger-icon span {
+      display: block;
+      position: absolute;
+      height: 3px;
+      width: 100%;
+      background: white;
+      border-radius: 3px;
+      opacity: 1;
+      left: 0;
+      transform: rotate(0deg);
+      transition: 0.25s ease-in-out;
+    }
+
+    .hamburger-icon span:nth-child(1) {
+      top: 0px;
+    }
+
+    .hamburger-icon span:nth-child(2) {
+      top: 8px;
+    }
+
+    .hamburger-icon span:nth-child(3) {
+      top: 16px;
+    }
+
+    .hamburger-icon.open span:nth-child(1) {
+      top: 8px;
+      transform: rotate(135deg);
+    }
+
+    .hamburger-icon.open span:nth-child(2) {
+      opacity: 0;
+      left: -60px;
+    }
+
+    .hamburger-icon.open span:nth-child(3) {
+      top: 8px;
+      transform: rotate(-135deg);
+    }
+
+    @media (max-width: 768px) {
       .mobile-menu-btn {
-        display: none; /* Visible only on mobile via media query */
-        background: none;
-        border: none;
-        font-size: 20px; /* Slightly smaller font size */
-        color: white;
-        cursor: pointer;
-        padding: 5px; /* Reduced padding for a smaller appearance */
-        z-index: 1010;
-        position: absolute;
-        top: 10px; /* Distance from the top */
-        right: 10px; /* Distance from the right */
-      }
-
-      /* Style for overlay when the menu is active */
-      .menu-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.7);
-        z-index: 999; /* Slightly below the mobile button */
-      }
-
-      .menu-overlay.show {
         display: block;
-      }
-      /* Hamburger Icon */
-      .hamburger-icon {
-        position: absolute; /* Ensures proper placement */
-        top: 10px; /* Aligns with the button */
-        right: 15px; /* Aligns with the button */
-        width: 24px;
-        height: 18px;
-        display: inline-block;
-        z-index: 1011; /* Higher than the overlay and other elements */
-        cursor: pointer; /* Shows as interactive */
-      }
-      /* Ensure other elements are properly layered */
-      .menu-overlay {
-        z-index: 1005; /* Below the hamburger and mobile button */
+        /* Show the button for smaller screens */
       }
 
       nav ul {
-        z-index: 1000; /* Positioned below everything else */
+        display: none;
+        /* Hide the full menu */
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 250px;
+        height: 100vh;
+        background: #000;
+        z-index: 1000;
+        border-left: 3px solid #77aaff;
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
       }
 
-      .hamburger-icon span {
-        display: block;
-        position: absolute;
-        height: 3px;
-        width: 100%;
-        background: white;
-        border-radius: 3px;
+      nav ul.show {
+        display: flex;
+        transform: translateX(0);
+        /* Slide-in menu */
+      }
+    }
+
+    /* Custom Scrollbar Styles */
+    /* For Webkit browsers (Chrome, Safari, Edge) */
+    ::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #007bff;
+      border-radius: 10px;
+      border: 3px solid #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #0056b3;
+    }
+
+    /* For Firefox */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #007bff #f1f1f1;
+    }
+
+    /* Header Styles */
+    header {
+      background-color: #000000;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+
+    /* Controls Styles */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 15px;
+    }
+
+    .controls input,
+    .controls select {
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .view-btn {
+      padding: 8px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    /* Loader Container Styles */
+    .loader-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      /* Ensure it is above other product items */
+      display: none;
+      /* Initially hidden */
+      width: 100px;
+      height: 100px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Dot Styles */
+    .loader-container .dot {
+      width: 15px;
+      height: 15px;
+      margin: 0 5px;
+      border-radius: 50%;
+      background-color: #007bff;
+      animation: dot-blink 0.8s infinite alternate;
+    }
+
+    .loader-container .dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .loader-container .dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    /* Animation for Blinking Effect */
+    @keyframes dot-blink {
+      0% {
+        opacity: 0.3;
+      }
+
+      100% {
         opacity: 1;
-        left: 0;
-        transform: rotate(0deg);
-        transition: 0.25s ease-in-out;
+      }
+    }
+
+    /* Product Grid Styles */
+    .product-grid {
+      position: relative;
+      /* Ensure loader is positioned inside the grid */
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .product-item {
+      background-color: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .product-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .product-info {
+      padding: 10px 0;
+    }
+
+    .product-description {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .product-category {
+      font-size: 13px;
+      color: #777;
+    }
+
+    .product-links a {
+      display: inline-block;
+      margin-top: 10px;
+      text-decoration: none;
+      color: white;
+      background-color: #007bff;
+      padding: 8px 12px;
+      border-radius: 5px;
+    }
+
+    .product-links a.enquiry-link {
+      background-color: #28a745;
+    }
+
+    /* List View Styles */
+    .product-list {
+      display: block;
+      padding: 20px;
+    }
+
+    .product-list .product-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      padding: 15px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-list .product-item .product-image {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      margin-right: 15px;
+    }
+
+    .product-list .product-info {
+      flex-grow: 1;
+    }
+
+    .product-list .product-info h3 {
+      font-size: 1.2em;
+      margin: 5px 0;
+    }
+
+    .product-list .product-info p {
+      font-size: 0.9em;
+      color: #666;
+    }
+
+    .product-list .product-links {
+      margin-top: 10px;
+    }
+
+    .product-list .product-links a {
+      font-size: 0.9em;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        padding: 15px 10px;
       }
 
-      .hamburger-icon span:nth-child(1) {
-        top: 0px;
-      }
-
-      .hamburger-icon span:nth-child(2) {
-        top: 8px;
-      }
-
-      .hamburger-icon span:nth-child(3) {
-        top: 16px;
-      }
-
-      .hamburger-icon.open span:nth-child(1) {
-        top: 8px;
-        transform: rotate(135deg);
-      }
-
-      .hamburger-icon.open span:nth-child(2) {
-        opacity: 0;
-        left: -60px;
-      }
-
-      .hamburger-icon.open span:nth-child(3) {
-        top: 8px;
-        transform: rotate(-135deg);
-      }
-
-      @media (max-width: 768px) {
-        .mobile-menu-btn {
-          display: block; /* Show the button for smaller screens */
-        }
-
-        nav ul {
-          display: none; /* Hide the full menu */
-          flex-direction: column;
-          position: fixed;
-          top: 0;
-          right: 0;
-          width: 250px;
-          height: 100vh;
-          background: #000;
-          z-index: 1000;
-          border-left: 3px solid #77aaff;
-          transform: translateX(100%);
-          transition: transform 0.3s ease-in-out;
-        }
-
-        nav ul.show {
-          display: flex;
-          transform: translateX(0); /* Slide-in menu */
-        }
-      }
-
-      /* Custom Scrollbar Styles */
-      /* For Webkit browsers (Chrome, Safari, Edge) */
+      /* Adjust scrollbar for medium screens */
       ::-webkit-scrollbar {
-        width: 12px;
-      }
-
-      ::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 10px;
+        width: 10px;
       }
 
       ::-webkit-scrollbar-thumb {
-        background: #007bff;
-        border-radius: 10px;
-        border: 3px solid #f1f1f1;
-      }
-
-      ::-webkit-scrollbar-thumb:hover {
-        background: #0056b3;
-      }
-
-      /* For Firefox */
-      * {
-        scrollbar-width: thin;
-        scrollbar-color: #007bff #f1f1f1;
-      }
-
-      /* Header Styles */
-      header {
-        background-color: #000000;
-        color: white;
-        padding: 15px;
-        text-align: center;
-      }
-
-      /* Controls Styles */
-      .controls {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        padding: 15px;
+        border: 2px solid #f1f1f1;
       }
 
       .controls input,
       .controls select {
-        padding: 8px;
-        font-size: 16px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
+        width: 100%;
+        max-width: 300px;
+      }
+
+      .view-buttons {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+        max-width: 300px;
+        justify-content: space-between;
       }
 
       .view-btn {
-        padding: 8px 15px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-      }
-
-      /* Loader Container Styles */
-      .loader-container {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 10;
-        /* Ensure it is above other product items */
-        display: none;
-        /* Initially hidden */
-        width: 100px;
-        height: 100px;
-        background-color: rgba(255, 255, 255, 0.8);
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-
-      /* Dot Styles */
-      .loader-container .dot {
-        width: 15px;
-        height: 15px;
-        margin: 0 5px;
-        border-radius: 50%;
-        background-color: #007bff;
-        animation: dot-blink 0.8s infinite alternate;
-      }
-
-      .loader-container .dot:nth-child(2) {
-        animation-delay: 0.2s;
-      }
-
-      .loader-container .dot:nth-child(3) {
-        animation-delay: 0.4s;
-      }
-
-      /* Animation for Blinking Effect */
-      @keyframes dot-blink {
-        0% {
-          opacity: 0.3;
-        }
-
-        100% {
-          opacity: 1;
-        }
-      }
-
-      /* Product Grid Styles */
-      .product-grid {
-        position: relative;
-        /* Ensure loader is positioned inside the grid */
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 20px;
-        padding: 20px;
-      }
-
-      .product-item {
-        background-color: white;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
-      }
-
-      .product-item img {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-        border-radius: 5px;
-      }
-
-      .product-info {
-        padding: 10px 0;
-      }
-
-      .product-description {
+        flex: 1;
+        padding: 10px;
         font-size: 14px;
-        color: #555;
       }
 
-      .product-category {
-        font-size: 13px;
-        color: #777;
-      }
-
-      .product-links a {
-        display: inline-block;
-        margin-top: 10px;
-        text-decoration: none;
-        color: white;
-        background-color: #007bff;
-        padding: 8px 12px;
-        border-radius: 5px;
-      }
-
-      .product-links a.enquiry-link {
-        background-color: #28a745;
-      }
-
-      /* List View Styles */
-      .product-list {
-        display: block;
-        padding: 20px;
-      }
-
-      .product-list .product-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        background-color: #fff;
+      .product-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
         padding: 15px;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Adjust list view on small screens */
+      .product-list .product-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px;
       }
 
       .product-list .product-item .product-image {
-        width: 120px;
+        width: 100%;
+        height: 150px;
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+
+      .product-item h3 {
+        font-size: 16px;
+      }
+
+      .product-description {
+        font-size: 13px;
+      }
+
+      .product-links a {
+        padding: 6px 10px;
+        font-size: 13px;
+        margin-top: 8px;
+      }
+    }
+
+    /* Additional breakpoint for very small screens */
+    @media (max-width: 480px) {
+      .product-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 10px;
+        padding: 10px;
+      }
+
+      /* Adjust scrollbar for small screens */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        border: 1px solid #f1f1f1;
+      }
+
+      /* Improve touch scrolling for mobile */
+      .product-grid,
+      .product-list {
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .product-item {
+        padding: 10px;
+      }
+
+      .product-item img {
         height: 120px;
-        object-fit: cover;
-        margin-right: 15px;
       }
 
-      .product-list .product-info {
-        flex-grow: 1;
+      .product-info {
+        padding: 5px 0;
       }
 
-      .product-list .product-info h3 {
-        font-size: 1.2em;
+      .product-description {
+        font-size: 12px;
         margin: 5px 0;
       }
 
-      .product-list .product-info p {
-        font-size: 0.9em;
-        color: #666;
+      .product-links {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
       }
 
-      .product-list .product-links {
-        margin-top: 10px;
+      .product-links a {
+        margin: 2px 0;
+        padding: 6px 8px;
+        font-size: 12px;
+        width: 100%;
+        box-sizing: border-box;
       }
 
-      .product-list .product-links a {
-        font-size: 0.9em;
+      .loader-container {
+        transform: translate(-50%, -50%) scale(0.8);
       }
 
-      /* Responsive Styles */
-      @media (max-width: 768px) {
-        .controls {
-          flex-direction: column;
-          align-items: center;
-          gap: 15px;
-          padding: 15px 10px;
-        }
+      .loader-container .dot {
+        width: 12px;
+        height: 12px;
+        margin: 0 3px;
+      }
+    }
 
-        /* Adjust scrollbar for medium screens */
-        ::-webkit-scrollbar {
-          width: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-          border: 2px solid #f1f1f1;
-        }
-
-        .controls input,
-        .controls select {
-          width: 100%;
-          max-width: 300px;
-        }
-
-        .view-buttons {
-          display: flex;
-          gap: 10px;
-          width: 100%;
-          max-width: 300px;
-          justify-content: space-between;
-        }
-
-        .view-btn {
-          flex: 1;
-          padding: 10px;
-          font-size: 14px;
-        }
-
-        .product-grid {
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 15px;
-          padding: 15px;
-        }
-
-        /* Adjust list view on small screens */
-        .product-list .product-item {
-          flex-direction: column;
-          align-items: flex-start;
-          padding: 12px;
-        }
-
-        .product-list .product-item .product-image {
-          width: 100%;
-          height: 150px;
-          margin-right: 0;
-          margin-bottom: 10px;
-        }
-
-        .product-item h3 {
-          font-size: 16px;
-        }
-
-        .product-description {
-          font-size: 13px;
-        }
-
-        .product-links a {
-          padding: 6px 10px;
-          font-size: 13px;
-          margin-top: 8px;
-        }
+    /* Responsive layout improvements */
+    @media (max-width: 576px) {
+      .logo-title {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
       }
 
-      /* Additional breakpoint for very small screens */
-      @media (max-width: 480px) {
-        .product-grid {
-          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-          gap: 10px;
-          padding: 10px;
-        }
-
-        /* Adjust scrollbar for small screens */
-        ::-webkit-scrollbar {
-          width: 8px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-          border: 1px solid #f1f1f1;
-        }
-
-        /* Improve touch scrolling for mobile */
-        .product-grid,
-        .product-list {
-          -webkit-overflow-scrolling: touch;
-        }
-
-        .product-item {
-          padding: 10px;
-        }
-
-        .product-item img {
-          height: 120px;
-        }
-
-        .product-info {
-          padding: 5px 0;
-        }
-
-        .product-description {
-          font-size: 12px;
-          margin: 5px 0;
-        }
-
-        .product-links {
-          display: flex;
-          flex-direction: column;
-          gap: 5px;
-        }
-
-        .product-links a {
-          margin: 2px 0;
-          padding: 6px 8px;
-          font-size: 12px;
-          width: 100%;
-          box-sizing: border-box;
-        }
-
-        .loader-container {
-          transform: translate(-50%, -50%) scale(0.8);
-        }
-
-        .loader-container .dot {
-          width: 12px;
-          height: 12px;
-          margin: 0 3px;
-        }
+      .logo {
+        margin-bottom: 10px;
       }
-      /* Responsive layout improvements */
-      @media (max-width: 576px) {
-        .logo-title {
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-        }
 
-        .logo {
-          margin-bottom: 10px;
-        }
-
-        .title h1 {
-          font-size: 24px;
-        }
-
-        .tagline {
-          font-size: 14px;
-        }
-
-        .footer-container {
-          grid-template-columns: 1fr;
-        }
+      .title h1 {
+        font-size: 24px;
       }
-    </style>
 
-    <!-- Filters & View Controls -->
-    <section class="controls">
-      <input
-        type="text"
-        id="searchBox"
-        placeholder="Search products..."
-        oninput="filterProducts()"
-      />
-      <select id="categoryFilter" onchange="filterProducts()">
-        <option value="all">All Categories</option>
-        <option value="Bags">Bags</option>
-        <option value="Accessories">Accessories</option>
-        <option value="Travel">Travel</option>
-        <option value="Purse">Purse</option>
-      </select>
-      <div class="view-buttons">
-        <button onclick="toggleView('grid')" class="view-btn">Grid View</button>
-        <button onclick="toggleView('list')" class="view-btn">List View</button>
+      .tagline {
+        font-size: 14px;
+      }
+
+      .footer-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <!-- Filters & View Controls -->
+  <section class="controls">
+    <input type="text" id="searchBox" placeholder="Search products..." oninput="filterProducts()" />
+    <select id="categoryFilter" onchange="filterProducts()">
+      <option value="all">All Categories</option>
+      <option value="Bags">Bags</option>
+      <option value="Accessories">Accessories</option>
+      <option value="Travel">Travel</option>
+      <option value="Purse">Purse</option>
+    </select>
+    <div class="view-buttons">
+      <button onclick="toggleView('grid')" class="view-btn">Grid View</button>
+      <button onclick="toggleView('list')" class="view-btn">List View</button>
+    </div>
+  </section>
+  <!-- Main Content Section -->
+  <main>
+    <div class="product-grid" id="product-list" style="overflow-y: auto; overflow-x: hidden">
+      <div id="loader" class="loader-container" style="display: none">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
       </div>
-    </section>
-    <!-- Main Content Section -->
-    <main>
-      <div
-        class="product-grid"
-        id="product-list"
-        style="overflow-y: auto; overflow-x: hidden"
-      >
-        <div id="loader" class="loader-container" style="display: none">
-          <span class="dot"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-        </div>
 
-        <!-- Products will be loaded here dynamically -->
-      </div>
-    </main>
+      <!-- Products will be loaded here dynamically -->
+    </div>
+  </main>
 
-    <!-- Footer Section -->
-    <footer>
-      <div class="footer-container">
-        <div class="footer-section about">
-          <h3>About BagSite</h3>
-          <p>
-            FZ Creation Bags offers a wide range of high-quality bags and
-            accessories, blending style with functionality for every occasion.
-          </p>
-        </div>
-        <div class="footer-section links">
-          <h3>Quick Links</h3>
-          <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="products.html">Products</a></li>
-            <li><a href="aboutus.html">About Us</a></li>
-            <li><a href="enquiry.html">Enquiry</a></li>
-            <li><a href="contact.html">Contact Us</a></li>
-          </ul>
-        </div>
-        <div class="footer-section contact">
-          <h3>Contact Us</h3>
-          <p>Email: info@bagsite.com</p>
-          <p>Phone: +91 77159 76706</p>
-          <p>Address: Sion Dharavi, Mumbai, Maharashtra, India</p>
-        </div>
-      </div>
-      <div class="footer-bottom">
+  <!-- Footer Section -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-section about">
+        <h3>About BagSite</h3>
         <p>
-          &copy; 2025 FZ Creation Bags. All rights reserved. |
-          <a href="/privacy-policy.html">Privacy Policy</a> |
-          <a href="/terms-of-service.html">Terms of Service</a>
+          FZ Creation Bags offers a wide range of high-quality bags and
+          accessories, blending style with functionality for every occasion.
         </p>
       </div>
-    </footer>
-    <!-- Mobile Navigation Script -->
+      <div class="footer-section links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="aboutus.html">About Us</a></li>
+          <li><a href="enquiry.html">Enquiry</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-section contact">
+        <h3>Contact Us</h3>
+        <p>Email: info@bagsite.com</p>
+        <p>Phone: +91 77159 76706</p>
+        <p>Address: Sion Dharavi, Mumbai, Maharashtra, India</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>
+        &copy; 2025 FZ Creation Bags. All rights reserved. |
+        <a href="/privacy-policy.html">Privacy Policy</a> |
+        <a href="/terms-of-service.html">Terms of Service</a>
+      </p>
+    </div>
+  </footer>
+  <!-- Mobile Navigation Script -->
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const menuBtn = document.querySelector(".mobile-menu-btn");
-        const hamburgerIcon = document.querySelector(".hamburger-icon");
-        const navMenu = document.querySelector("nav ul");
-        const menuOverlay = document.querySelector(".menu-overlay");
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const menuBtn = document.querySelector(".mobile-menu-btn");
+      const hamburgerIcon = document.querySelector(".hamburger-icon");
+      const navMenu = document.querySelector("nav ul");
+      const menuOverlay = document.querySelector(".menu-overlay");
 
-        // Function to toggle menu state
-        function toggleMenu() {
-          const isExpanded = menuBtn.getAttribute("aria-expanded") === "true";
-          const newExpandedState = !isExpanded;
+      // Function to toggle menu state
+      function toggleMenu() {
+        const isExpanded = menuBtn.getAttribute("aria-expanded") === "true";
+        const newExpandedState = !isExpanded;
 
-          // Update ARIA state
-          menuBtn.setAttribute("aria-expanded", newExpandedState.toString());
+        // Update ARIA state
+        menuBtn.setAttribute("aria-expanded", newExpandedState.toString());
 
-          // Toggle visual classes
-          navMenu.classList.toggle("show");
-          hamburgerIcon.classList.toggle("open");
-          menuOverlay.classList.toggle("show");
-          document.querySelector("nav").classList.toggle("active");
+        // Toggle visual classes
+        navMenu.classList.toggle("show");
+        hamburgerIcon.classList.toggle("open");
+        menuOverlay.classList.toggle("show");
+        document.querySelector("nav").classList.toggle("active");
 
-          // Prevent body scrolling when menu is open
-          if (newExpandedState) {
-            document.body.style.overflow = "hidden";
-          } else {
-            document.body.style.overflow = "";
-          }
-
-          // Announce menu state for screen readers
-          const menuState = newExpandedState ? "opened" : "closed";
-          menuBtn.setAttribute("aria-label", `Menu ${menuState}`);
+        // Prevent body scrolling when menu is open
+        if (newExpandedState) {
+          document.body.style.overflow = "hidden";
+        } else {
+          document.body.style.overflow = "";
         }
 
-        // Toggle menu on button click
-        menuBtn.addEventListener("click", function (e) {
-          e.stopPropagation();
-          toggleMenu();
-        });
+        // Announce menu state for screen readers
+        const menuState = newExpandedState ? "opened" : "closed";
+        menuBtn.setAttribute("aria-label", `Menu ${menuState}`);
+      }
 
-        // Close menu when clicking on overlay
-        menuOverlay.addEventListener("click", function () {
-          toggleMenu();
-        });
+      // Toggle menu on button click
+      menuBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        toggleMenu();
+      });
 
-        // Close menu when clicking on a link
-        const navLinks = document.querySelectorAll("nav ul li a");
-        navLinks.forEach((link) => {
-          link.addEventListener("click", function () {
-            if (navMenu.classList.contains("show")) {
-              toggleMenu();
-            }
-          });
+      // Close menu when clicking on overlay
+      menuOverlay.addEventListener("click", function () {
+        toggleMenu();
+      });
 
-          // Add keyboard accessibility for menu items
-          link.setAttribute("role", "menuitem");
-          link.addEventListener("keydown", function (e) {
-            // Close menu on Enter or Space after selecting an item
-            if (
-              (e.key === "Enter" || e.key === " ") &&
-              navMenu.classList.contains("show")
-            ) {
-              e.preventDefault();
-              toggleMenu();
-              // Follow the link after closing menu
-              setTimeout(() => {
-                window.location.href = this.href;
-              }, 300);
-            }
-          });
-        });
-
-        // Handle touch events better for mobile
-        navMenu.addEventListener(
-          "touchstart",
-          function (e) {
-            e.stopPropagation();
-          },
-          { passive: true }
-        );
-
-        // Add swipe to close functionality
-        let touchStartX = 0;
-        navMenu.addEventListener(
-          "touchstart",
-          function (e) {
-            touchStartX = e.changedTouches[0].screenX;
-          },
-          { passive: true }
-        );
-
-        navMenu.addEventListener(
-          "touchend",
-          function (e) {
-            const touchEndX = e.changedTouches[0].screenX;
-            const diff = touchStartX - touchEndX;
-
-            // If swiped left (for right-side menu)
-            if (diff > 50) {
-              toggleMenu();
-            }
-          },
-          { passive: true }
-        );
-
-        // Adjust menu on window resize
-        window.addEventListener("resize", function () {
-          if (window.innerWidth > 768) {
-            if (navMenu.classList.contains("show")) {
-              toggleMenu(); // Close the menu
-            }
-            // Reset styles for desktop view
-            document.body.style.overflow = "";
-            menuBtn.setAttribute("aria-expanded", "false");
-            menuBtn.setAttribute("aria-label", "Toggle menu");
+      // Close menu when clicking on a link
+      const navLinks = document.querySelectorAll("nav ul li a");
+      navLinks.forEach((link) => {
+        link.addEventListener("click", function () {
+          if (navMenu.classList.contains("show")) {
+            toggleMenu();
           }
         });
 
-        // Add keyboard navigation support
-        menuBtn.addEventListener("keydown", function (e) {
-          // Toggle on Enter or Space
-          if (e.key === "Enter" || e.key === " ") {
+        // Add keyboard accessibility for menu items
+        link.setAttribute("role", "menuitem");
+        link.addEventListener("keydown", function (e) {
+          // Close menu on Enter or Space after selecting an item
+          if (
+            (e.key === "Enter" || e.key === " ") &&
+            navMenu.classList.contains("show")
+          ) {
             e.preventDefault();
             toggleMenu();
-          }
-        });
-
-        // Allow Escape key to close the menu
-        document.addEventListener("keydown", function (e) {
-          if (e.key === "Escape" && navMenu.classList.contains("show")) {
-            toggleMenu();
+            // Follow the link after closing menu
+            setTimeout(() => {
+              window.location.href = this.href;
+            }, 300);
           }
         });
       });
-    </script>
-  </body>
+
+      // Handle touch events better for mobile
+      navMenu.addEventListener(
+        "touchstart",
+        function (e) {
+          e.stopPropagation();
+        },
+        { passive: true }
+      );
+
+      // Add swipe to close functionality
+      let touchStartX = 0;
+      navMenu.addEventListener(
+        "touchstart",
+        function (e) {
+          touchStartX = e.changedTouches[0].screenX;
+        },
+        { passive: true }
+      );
+
+      navMenu.addEventListener(
+        "touchend",
+        function (e) {
+          const touchEndX = e.changedTouches[0].screenX;
+          const diff = touchStartX - touchEndX;
+
+          // If swiped left (for right-side menu)
+          if (diff > 50) {
+            toggleMenu();
+          }
+        },
+        { passive: true }
+      );
+
+      // Adjust menu on window resize
+      window.addEventListener("resize", function () {
+        if (window.innerWidth > 768) {
+          if (navMenu.classList.contains("show")) {
+            toggleMenu(); // Close the menu
+          }
+          // Reset styles for desktop view
+          document.body.style.overflow = "";
+          menuBtn.setAttribute("aria-expanded", "false");
+          menuBtn.setAttribute("aria-label", "Toggle menu");
+        }
+      });
+
+      // Add keyboard navigation support
+      menuBtn.addEventListener("keydown", function (e) {
+        // Toggle on Enter or Space
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggleMenu();
+        }
+      });
+
+      // Allow Escape key to close the menu
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && navMenu.classList.contains("show")) {
+          toggleMenu();
+        }
+      });
+    });
+  </script>
+</body>
+
 </html>
