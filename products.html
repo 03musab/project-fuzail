@@ -154,7 +154,17 @@
             </div>
           </div>
           <nav aria-label="Main Navigation">
-            <ul>
+            <button class="mobile-menu-btn"
+              aria-label="Toggle menu"
+              aria-expanded="false"
+              aria-controls="main-navigation">
+              <div class="hamburger-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </button>
+            <ul id="main-navigation" role="menu">
               <li><a href="index.html">Home</a></li>
               <li><a href="products.html">Products</a></li>
               <li><a href="aboutus.html">About Us</a></li>
@@ -164,6 +174,7 @@
           </nav>
         </div>
       </header>
+  
     <style>
         /* Global Styles */
         body {
@@ -172,8 +183,127 @@
             padding: 0;
             background-color: #f4f4f4;
             scroll-behavior: smooth;
+                overflow-x: hidden;
+
         }
-        
+             
+      /* Mobile Menu Button */
+      .mobile-menu-btn {
+  display: none; /* Visible only on mobile via media query */
+  background: none;
+  border: none;
+  font-size: 20px; /* Slightly smaller font size */
+  color: white;
+  cursor: pointer;
+  padding: 5px; /* Reduced padding for a smaller appearance */
+  z-index: 1010;
+  position: absolute;
+  top: 10px; /* Distance from the top */
+  right: 10px; /* Distance from the right */
+}
+
+/* Style for overlay when the menu is active */
+.menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 999; /* Slightly below the mobile button */
+}
+
+.menu-overlay.show {
+  display: block;
+}
+/* Hamburger Icon */
+.hamburger-icon {
+  position: absolute; /* Ensures proper placement */
+  top: 10px; /* Aligns with the button */
+  right: 15px; /* Aligns with the button */
+  width: 24px;
+  height: 18px;
+  display: inline-block;
+  z-index: 1011; /* Higher than the overlay and other elements */
+  cursor: pointer; /* Shows as interactive */
+}
+/* Ensure other elements are properly layered */
+.menu-overlay {
+  z-index: 1005; /* Below the hamburger and mobile button */
+}
+
+nav ul {
+  z-index: 1000; /* Positioned below everything else */
+}
+
+.hamburger-icon span {
+  display: block;
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  background: white;
+  border-radius: 3px;
+  opacity: 1;
+  left: 0;
+  transform: rotate(0deg);
+  transition: 0.25s ease-in-out;
+}
+
+.hamburger-icon span:nth-child(1) {
+  top: 0px;
+}
+
+.hamburger-icon span:nth-child(2) {
+  top: 8px;
+}
+
+.hamburger-icon span:nth-child(3) {
+  top: 16px;
+}
+
+.hamburger-icon.open span:nth-child(1) {
+  top: 8px;
+  transform: rotate(135deg);
+}
+
+.hamburger-icon.open span:nth-child(2) {
+  opacity: 0;
+  left: -60px;
+}
+
+.hamburger-icon.open span:nth-child(3) {
+  top: 8px;
+  transform: rotate(-135deg);
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block; /* Show the button for smaller screens */
+  }
+
+  nav ul {
+    display: none; /* Hide the full menu */
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 250px;
+    height: 100vh;
+    background: #000;
+    z-index: 1000;
+    border-left: 3px solid #77aaff;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  nav ul.show {
+    display: flex;
+    transform: translateX(0); /* Slide-in menu */
+  }
+}
+
+
         /* Custom Scrollbar Styles */
         /* For Webkit browsers (Chrome, Safari, Edge) */
         ::-webkit-scrollbar {
@@ -518,6 +648,30 @@
                 margin: 0 3px;
             }
         }
+             /* Responsive layout improvements */
+      @media (max-width: 576px) {
+        .logo-title {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+        
+        .logo {
+          margin-bottom: 10px;
+        }
+        
+        .title h1 {
+          font-size: 24px;
+        }
+        
+        .tagline {
+          font-size: 14px;
+        }
+        
+        .footer-container {
+          grid-template-columns: 1fr;
+        }
+      }
     </style>
    
     <!-- Filters & View Controls -->
@@ -581,6 +735,142 @@
             </p>
         </div>
     </footer>
+        <!-- Mobile Navigation Script -->
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const menuBtn = document.querySelector(".mobile-menu-btn");
+        const hamburgerIcon = document.querySelector(".hamburger-icon");
+        const navMenu = document.querySelector("nav ul");
+        const menuOverlay = document.querySelector(".menu-overlay");
+
+        // Function to toggle menu state
+        function toggleMenu() {
+          const isExpanded = menuBtn.getAttribute("aria-expanded") === "true";
+          const newExpandedState = !isExpanded;
+
+          // Update ARIA state
+          menuBtn.setAttribute("aria-expanded", newExpandedState.toString());
+
+          // Toggle visual classes
+          navMenu.classList.toggle("show");
+          hamburgerIcon.classList.toggle("open");
+          menuOverlay.classList.toggle("show");
+          document.querySelector("nav").classList.toggle("active");
+
+          // Prevent body scrolling when menu is open
+          if (newExpandedState) {
+            document.body.style.overflow = "hidden";
+          } else {
+            document.body.style.overflow = "";
+          }
+
+          // Announce menu state for screen readers
+          const menuState = newExpandedState ? "opened" : "closed";
+          menuBtn.setAttribute("aria-label", `Menu ${menuState}`);
+        }
+
+        // Toggle menu on button click
+        menuBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          toggleMenu();
+        });
+
+        // Close menu when clicking on overlay
+        menuOverlay.addEventListener("click", function () {
+          toggleMenu();
+        });
+
+        // Close menu when clicking on a link
+        const navLinks = document.querySelectorAll("nav ul li a");
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function () {
+            if (navMenu.classList.contains("show")) {
+              toggleMenu();
+            }
+          });
+
+          // Add keyboard accessibility for menu items
+          link.setAttribute("role", "menuitem");
+          link.addEventListener("keydown", function (e) {
+            // Close menu on Enter or Space after selecting an item
+            if (
+              (e.key === "Enter" || e.key === " ") &&
+              navMenu.classList.contains("show")
+            ) {
+              e.preventDefault();
+              toggleMenu();
+              // Follow the link after closing menu
+              setTimeout(() => {
+                window.location.href = this.href;
+              }, 300);
+            }
+          });
+        });
+
+        // Handle touch events better for mobile
+        navMenu.addEventListener(
+          "touchstart",
+          function (e) {
+            e.stopPropagation();
+          },
+          { passive: true }
+        );
+
+        // Add swipe to close functionality
+        let touchStartX = 0;
+        navMenu.addEventListener(
+          "touchstart",
+          function (e) {
+            touchStartX = e.changedTouches[0].screenX;
+          },
+          { passive: true }
+        );
+
+        navMenu.addEventListener(
+          "touchend",
+          function (e) {
+            const touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+
+            // If swiped left (for right-side menu)
+            if (diff > 50) {
+              toggleMenu();
+            }
+          },
+          { passive: true }
+        );
+
+        // Adjust menu on window resize
+        window.addEventListener("resize", function () {
+          if (window.innerWidth > 768) {
+            if (navMenu.classList.contains("show")) {
+              toggleMenu(); // Close the menu
+            }
+            // Reset styles for desktop view
+            document.body.style.overflow = "";
+            menuBtn.setAttribute("aria-expanded", "false");
+            menuBtn.setAttribute("aria-label", "Toggle menu");
+          }
+        });
+
+        // Add keyboard navigation support
+        menuBtn.addEventListener("keydown", function (e) {
+          // Toggle on Enter or Space
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggleMenu();
+          }
+        });
+
+        // Allow Escape key to close the menu
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && navMenu.classList.contains("show")) {
+            toggleMenu();
+          }
+        });
+      });
+    </script>
 </body>
 
 </html>

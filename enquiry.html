@@ -35,12 +35,10 @@
           </div>
         </div>
         <nav aria-label="Main Navigation">
-          <button
-            class="mobile-menu-btn"
+          <button class="mobile-menu-btn"
             aria-label="Toggle menu"
             aria-expanded="false"
-            aria-controls="main-navigation"
-          >
+            aria-controls="main-navigation">
             <div class="hamburger-icon">
               <span></span>
               <span></span>
@@ -179,22 +177,22 @@
       });
     </script>
 
-    <style>/* Custom Scrollbar Styles */
+    <style>
      
       
       /* Mobile Menu Button */
       .mobile-menu-btn {
-  display: none; /* Will show only on smaller screens via media query */
+  display: none; /* Visible only on mobile via media query */
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 20px; /* Slightly smaller font size */
   color: white;
   cursor: pointer;
-  padding: 10px;
-  z-index: 1001; /* Ensures the button is above other elements */
-  position: absolute; /* Allows manual placement */
-  top: 10px; /* Distance from the top of the screen */
-  right: 15px; /* Distance from the right edge of the screen */
+  padding: 5px; /* Reduced padding for a smaller appearance */
+  z-index: 1010;
+  position: absolute;
+  top: 10px; /* Distance from the top */
+  right: 10px; /* Distance from the right */
 }
 
 /* Style for overlay when the menu is active */
@@ -212,19 +210,25 @@
 .menu-overlay.show {
   display: block;
 }
-
-/* Hamburger menu animation */
+/* Hamburger Icon */
 .hamburger-icon {
-  position: absolute; /* Allows precise placement within the parent container */
-  top: 10px; /* Distance from the top edge */
-  right: 15px; /* Distance from the right edge */
+  position: absolute; /* Ensures proper placement */
+  top: 10px; /* Aligns with the button */
+  right: 15px; /* Aligns with the button */
   width: 24px;
   height: 18px;
   display: inline-block;
-  z-index: 1001; /* Ensures it appears above other elements if needed */
-  cursor: pointer; /* Indicates it's interactive */
+  z-index: 1011; /* Higher than the overlay and other elements */
+  cursor: pointer; /* Shows as interactive */
+}
+/* Ensure other elements are properly layered */
+.menu-overlay {
+  z-index: 1005; /* Below the hamburger and mobile button */
 }
 
+nav ul {
+  z-index: 1000; /* Positioned below everything else */
+}
 
 .hamburger-icon span {
   display: block;
@@ -266,46 +270,32 @@
   transform: rotate(-135deg);
 }
 
-/* Responsive Media Query */
 @media (max-width: 768px) {
   .mobile-menu-btn {
-    display: block; /* Show only on screens smaller than 768px */
+    display: block; /* Show the button for smaller screens */
   }
 
   nav ul {
-    display: none; /* Initially hidden */
+    display: none; /* Hide the full menu */
     flex-direction: column;
     position: fixed;
     top: 0;
-    width: 280px;
-    height: 100vh;
-    background-color: #000000;
-    z-index: 1000;
-    padding: 60px 0 20px;
-    border-left: #77aaff 3px solid;
     right: 0;
-    transform: translateX(100%); /* Hidden off-screen */
+    width: 250px;
+    height: 100vh;
+    background: #000;
+    z-index: 1000;
+    border-left: 3px solid #77aaff;
+    transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
-    overflow-y: auto;
-    will-change: transform;
   }
 
   nav ul.show {
     display: flex;
-    transform: translateX(0); /* Slide-in effect */
-  }
-
-  nav li {
-    margin: 15px 0;
-    text-align: center;
-  }
-
-  nav li a {
-    display: block;
-    padding: 12px 20px;
-    font-size: 18px;
+    transform: translateX(0); /* Slide-in menu */
   }
 }
+
 
       /* General Styles */
       body {
@@ -369,9 +359,10 @@
         transition: background 0.3s ease;
       }
       
-      button:hover {
-        background: #0056b3;
-      }
+      button:not(.mobile-menu-btn):hover {
+  background: #0056b3;
+}
+
       
       /* Product List Styling */
       #product-list {
