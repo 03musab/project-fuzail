@@ -1,383 +1,435 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Product Details</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="icon" type="image/png" href="images/logo.jpg">
-
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-    />
-  </head>
-  <body>
-    <a
-      href="https://wa.me/+917715976706"
-      class="whatsapp-float"
-      target="_blank"
-    >
-      <i class="fab fa-whatsapp"></i>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="images/logo.jpg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <a href="https://wa.me/+917715976706" class="whatsapp-float" target="_blank">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  <header>
+    <h1>Product Details</h1>
+  </header>
+  <br>
+  <div class="back-button-container">
+    <a href="products.html" class="back-button">
+      <i class="fas fa-arrow-left"></i> Back to Products
     </a>
-    <header>
-      <h1>Product Details</h1>
-    </header>
-    <br>
-    <div class="back-button-container">
-      <a href="products.html" class="back-button">
-        <i class="fas fa-arrow-left"></i> Back to Products
-      </a>
+  </div>
+  <br>
+  <div id="product-container">
+    <div id="loader" class="loader-container">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
     </div>
-    <br></br>
-    <div id="product-container">
-      <div id="loader" class="loader-container">
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-      </div>
-    </div>
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-      import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    
-      const firebaseConfig = {
-        apiKey: "AIzaSyDV7YHJA0cQiTqJXVWQP0IKjKUIellFz8E",
-        authDomain: "fuzail-inventory.firebaseapp.com",
-        projectId: "fuzail-inventory",
-        storageBucket: "fuzail-inventory.appspot.com",
-        messagingSenderId: "92783887447",
-        appId: "1:92783887447:web:e884309ae85e432d73cf12",
-        measurementId: "G-354CVKGNWK",
-      };
-    
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-    
-      async function fetchProductDetails() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const productId = urlParams.get("id");
-    
-        if (!productId) {
-          document.getElementById("product-container").innerHTML =
-            "<p>Product not found.</p>";
+  </div>
+
+<br>
+<br>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDV7YHJA0cQiTqJXVWQP0IKjKUIellFz8E",
+      authDomain: "fuzail-inventory.firebaseapp.com",
+      projectId: "fuzail-inventory",
+      storageBucket: "fuzail-inventory.appspot.com",
+      messagingSenderId: "92783887447",
+      appId: "1:92783887447:web:e884309ae85e432d73cf12",
+      measurementId: "G-354CVKGNWK",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function fetchProductDetails() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = urlParams.get("id");
+
+      if (!productId) {
+        document.getElementById("product-container").innerHTML = "<p>Product not found.</p>";
+        return;
+      }
+
+      const productRef = doc(db, "products", productId);
+
+      try {
+        const productSnap = await getDoc(productRef);
+
+        if (!productSnap.exists()) {
+          document.getElementById("product-container").innerHTML = "<p>Product details not available.</p>";
           return;
         }
-    
-        const productRef = doc(db, "products", productId);
-    
-        try {
-          const productSnap = await getDoc(productRef);
-    
-          if (!productSnap.exists()) {
-            document.getElementById("product-container").innerHTML =
-              "<p>Product details not available.</p>";
-            return;
-          }
-    
-          const product = productSnap.data();
-          displayProduct(product, productId);
-        } catch (error) {
-          console.error("Error fetching product details:", error);
-          document.getElementById("product-container").innerHTML =
-            "<p>Error loading product.</p>";
-        }
+
+        const product = productSnap.data();
+        displayProduct(product, productId);
+      } catch (error) {
+        console.error("Error fetching product details:", error);
+        document.getElementById("product-container").innerHTML = "<p>Error loading product.</p>";
       }
-    
-      function displayProduct(product, productId) {
-        const container = document.getElementById("product-container");
-    
-        if (!container) {
-          console.error("Error: product-container not found!");
-          return;
-        }
-    
-        const category = product.category || product.Category || "N/A";
-        const images = product.images || [];
-    
-        // Generate image elements with click event for lightbox
-        const imageElements = images
-          .map(
-            (imgUrl) =>
-              `<img src="${imgUrl}" alt="${product.name}" class="product-image" onclick="openLightbox('${imgUrl}')">`
-          )
-          .join("");
-    
-        container.innerHTML = `
-          <div class="product-detail">
-              <div class="product-images-container">${imageElements}</div>
-              <div class="product-info">
-                  <h2>${product.name}</h2>
-                  <p class="product-detailed-description">${product.detaileddescription}</p>
-    
-                  <p><strong>Category:</strong> ${category}</p>
-                  <a href="enquiry.html?product=${productId}" class="enquiry-link">Enquire Now</a>
-              </div>
-          </div>
-        `;
-      }
-    
-      // Lightbox functionality
-      window.openLightbox = function (imageUrl) {
-        const lightboxContainer = document.createElement("div");
-        lightboxContainer.id = "lightbox-container";
-        lightboxContainer.innerHTML = `
-          <div class="lightbox-content">
-              <img src="${imageUrl}" alt="Product Image" class="lightbox-image">
-              <button class="close-lightbox" onclick="closeLightbox()">×</button>
-          </div>
-        `;
-        document.body.appendChild(lightboxContainer);
-        document.body.style.overflow = "hidden"; // Disable scrolling while lightbox is open
-    
-        // Close lightbox when clicking outside the image
-        lightboxContainer.addEventListener("click", (event) => {
-          if (event.target === lightboxContainer) {
-            closeLightbox();
-          }
-        });
-      };
-    
-      window.closeLightbox = function () {
-        const lightboxContainer = document.getElementById("lightbox-container");
-        if (lightboxContainer) {
-          lightboxContainer.remove();
-          document.body.style.overflow = ""; // Re-enable scrolling
-        }
-      };
-    
-      document.addEventListener("DOMContentLoaded", fetchProductDetails);
-    </script>
-    
-
-    <style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-}
-
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #000;
-    color: white;
-    padding: 15px;
-}
-
-.back-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: bold;
-    color: #fff;
-    background: linear-gradient(135deg, #6aaaee, #2702f8);
-    padding: 12px 24px;
-    border-radius: 50px;
-    transition: all 0.3s ease-in-out;
-    border: none;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    margin-left: 20px;  /* Moves the button to the right */
-}
-.back-button i {
-    margin-right: 10px; /* Adjust as needed */
-}
-
-
-.back-button:hover {
-    background: linear-gradient(135deg, #000000, #000000);
-    transform: translateY(-2px);
-}
-
-#product-container {
-    max-width: 700px;
-    margin: 20px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.product-detail {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.product-images-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-}
-
-.product-image {
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 5px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease-in-out;
-}
-
-.product-image:hover {
-    transform: scale(1.05);
-}
-
-.product-info {
-    margin-top: 15px;
-    text-align: center;
-}
-.product-detailed-description {
-    font-size: 16px;
-    line-height: 1.6;
-    color: #444;
-    margin-top: 10px;
-    padding: 10px;
-    background: #f9f9f9;
-    border-left: 4px solid #2702f8; /* Accent border */
-    border-radius: 5px;
-    text-align: left; /* Ensures text aligns left */
-    display: block; /* Makes sure it behaves as a block element */
-    width: 100%; /* Ensures it takes full width */
-}
-  /* Lightbox container */
-  #lightbox-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    animation: fadeIn 0.3s ease-in-out;
-  }
-
-  /* Lightbox content */
-  .lightbox-content {
-    position: relative;
-    width: 80%; /* Adjust width as needed */
-    max-width: 600px;
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    animation: scaleIn 0.3s ease-in-out;
-  }
-
-  /* Lightbox image */
-  .lightbox-image {
-    max-width: 100%;
-    max-height: 70vh; /* Ensures the image doesn't exceed viewport height */
-    display: block;
-    margin: 0 auto;
-    border-radius: 5px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  }
-
-  /* Close button */
-  .close-lightbox {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #ff5555;
-    color: #fff;
-    font-size: 24px;
-    font-weight: bold;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-  }
-
-  .close-lightbox:hover {
-    background: #ff2222;
-    transform: scale(1.1);
-  }
-
-  /* Animations */
-  @keyframes fadeIn {
-    from {
-      background: rgba(0, 0, 0, 0);
     }
-    to {
+
+    function displayProduct(product, productId) {
+      const container = document.getElementById("product-container");
+
+      if (!container) {
+        console.error("Error: product-container not found!");
+        return;
+      }
+
+      const category = product.category || product.Category || "N/A";
+      const images = product.images || [];
+
+      const imageElements = images
+        .map(
+          (imgUrl) =>
+            `<img src="${imgUrl}" alt="${product.name}" class="product-image" onclick="openLightbox('${imgUrl}')">`
+        )
+        .join("");
+
+      container.innerHTML = `
+        <div class="product-detail">
+            <div class="product-images-container">${imageElements}</div>
+            <div class="product-info">
+                <h2>${product.name}</h2>
+                <p class="product-detailed-description">${product.detaileddescription}</p>
+                <p><strong>Category:</strong> ${category}</p>
+                <a href="enquiry.html?product=${productId}" class="enquiry-link">Enquire Now</a>
+            </div>
+        </div>
+      `;
+    }
+
+    window.openLightbox = function (imageUrl) {
+      const lightboxContainer = document.createElement("div");
+      lightboxContainer.id = "lightbox-container";
+      lightboxContainer.innerHTML = `
+        <div class="lightbox-content">
+            <img src="${imageUrl}" alt="Product Image" class="lightbox-image">
+            <button class="close-lightbox" onclick="closeLightbox()">×</button>
+        </div>
+      `;
+      document.body.appendChild(lightboxContainer);
+      document.body.style.overflow = "hidden";
+
+      lightboxContainer.addEventListener("click", (event) => {
+        if (event.target === lightboxContainer) {
+          closeLightbox();
+        }
+      });
+    };
+
+    window.closeLightbox = function () {
+      const lightboxContainer = document.getElementById("lightbox-container");
+      if (lightboxContainer) {
+        lightboxContainer.remove();
+        document.body.style.overflow = "";
+      }
+    };
+
+    document.addEventListener("DOMContentLoaded", fetchProductDetails);
+
+    // Scroll to Top Function
+    window.scrollToTop = function () {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    // Show/Hide Back to Top Button
+    window.addEventListener("scroll", function () {
+      const backToTopButton = document.getElementById("back-to-top");
+      if (window.scrollY > 300) {
+        backToTopButton.style.display = "block";
+      } else {
+        backToTopButton.style.display = "none";
+      }
+    });
+  </script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      overflow-x: hidden; /* Hide horizontal scrollbar */
+
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #000;
+      color: white;
+      padding: 15px;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: bold;
+      color: #fff;
+      background: linear-gradient(135deg, #6aaaee, #2702f8);
+      padding: 12px 24px;
+      border-radius: 50px;
+      transition: all 0.3s ease-in-out;
+      border: none;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      margin-left: 20px;
+    }
+
+    .back-button i {
+      margin-right: 10px;
+    }
+
+    .back-button:hover {
+      background: linear-gradient(135deg, #000000, #000000);
+      transform: translateY(-2px);
+    }
+
+    #product-container {
+      max-width: 700px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .product-detail {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .product-images-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .product-image {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 5px;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .product-image:hover {
+      transform: scale(1.05);
+    }
+
+    .product-info {
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .product-detailed-description {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #444;
+      margin-top: 10px;
+      padding: 10px;
+      background: #f9f9f9;
+      border-left: 4px solid #2702f8;
+      border-radius: 5px;
+      text-align: left;
+      display: block;
+      width: 100%;
+    }
+
+    #lightbox-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease-in-out;
     }
-  }
 
-  @keyframes scaleIn {
-    from {
-      transform: scale(0.9);
-      opacity: 0;
+    .lightbox-content {
+      position: relative;
+      width: 80%;
+      max-width: 600px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      animation: scaleIn 0.3s ease-in-out;
     }
-    to {
-      transform: scale(1);
-      opacity: 1;
+
+    .lightbox-image {
+      max-width: 100%;
+      max-height: 70vh;
+      display: block;
+      margin: 0 auto;
+      border-radius: 5px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
-  }
 
+    .close-lightbox {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ff5555;
+      color: #fff;
+      font-size: 24px;
+      font-weight: bold;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
 
-.enquiry-link {
-    display: inline-block;
-    margin-top: 10px;
-    text-decoration: none;
-    color: white;
-    background-color: #28a745;
-    padding: 8px 12px;
-    border-radius: 5px;
-    transition: background 0.3s ease-in-out;
-}
+    .close-lightbox:hover {
+      background: #ff2222;
+      transform: scale(1.1);
+    }
 
-.enquiry-link:hover {
-    background-color: #218838;
-}
+    @keyframes fadeIn {
+      from {
+        background: rgba(0, 0, 0, 0);
+      }
+      to {
+        background: rgba(0, 0, 0, 0.8);
+      }
+    }
 
-    </style>
-    <footer>
-      <div class="footer-container">
-        <div class="footer-section about">
-          <h3>About BagSite</h3>
-          <p>
-            FZ Creation Bags offers a wide range of high-quality bags and accessories,
-            blending style with functionality for every occasion.
-          </p>
-        </div>
-        <div class="footer-section links">
-          <h3>Quick Links</h3>
-          <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="products.html">Products</a></li>
-            <li><a href="aboutus.html">About Us</a></li>
-            <li><a href="enquiry.html">Enquiry</a></li>
-            <li><a href="contact.html">Contact Us</a></li>
-          </ul>
-        </div>
-        <div class="footer-section contact">
-          <h3>Contact Us</h3>
-          <p>Email: info@bagsite.com</p>
-          <p>Phone: +91 77159 76706</p>
-          <p>Address: Sion Dharavi, Mumbai, Maharashtra, India</p>
-        </div>
-        
-      </div>
-      <div class="footer-bottom">
-        <p>
-          &copy; 2025 FZ Creation Bags. All rights reserved. |
-          <a href="/privacy-policy.html">Privacy Policy</a> |
-          <a href="/terms-of-service.html">Terms of Service</a>
-        </p>
-      </div>
-    </footer>
-    <script src="scroll-fade.js"></script>
-  </body>
+    @keyframes scaleIn {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .enquiry-link {
+      display: inline-block;
+      margin-top: 10px;
+      text-decoration: none;
+      color: white;
+      background-color: #28a745;
+      padding: 8px 12px;
+      border-radius: 5px;
+      transition: background 0.3s ease-in-out;
+    }
+
+    .enquiry-link:hover {
+      background-color: #218838;
+    }
+
+    @media (max-width: 576px) {
+      .logo-title {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .logo {
+        margin-bottom: 10px;
+      }
+
+      .title h1 {
+        font-size: 24px;
+      }
+
+      .tagline {
+        font-size: 14px;
+      }
+
+      .footer-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    footer {
+      background-color: #000000;
+      color: #ffffff;
+      padding: 40px 0;
+      font-size: 16px;
+    }
+
+    .footer-section {
+      color: #ffffff !important;
+    }
+
+    .footer-section h3 {
+      color: #ffffff;
+      font-size: 1.2em;
+      margin-bottom: 15px;
+    }
+
+    .footer-section p,
+    .footer-section li,
+    .footer-section a {
+      color: #ffffff;
+      font-size: 1em;
+    }
+
+    .footer-section a:hover {
+      color: #6aaaee;
+    }
+
+    @media (max-width: 576px) {
+      .footer-container {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .footer-section {
+        flex: 1 1 100%;
+        margin: 10px 0;
+      }
+    }
+
+    /* Back to Top Button */
+    #back-to-top {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    #back-to-top:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+    }
+  </style>
+
+  <script src="scroll-fade.js"></script>
+</body>
 </html>
