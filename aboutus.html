@@ -192,34 +192,34 @@ body {
     >
       <i class="fab fa-whatsapp"></i>
     </a>
-    <header>
-        <div class="container">
-          <div class="logo-title">
-            <img src="images/logo.jpg" alt="FZ Creation Bags Logo" class="logo" />
-            <div class="title">
-              <h1>FZ Creation Bags</h1>
-              <span class="tagline">Precision. Quality. Innovation</span>
-            </div>
-          </div>
-          <nav aria-label="Main Navigation">
-            <button class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-navigation">
-              <div class="hamburger-icon">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            </button>
-            <ul id="main-navigation" role="menu">
-              <li><a href="index.html">Home</a></li>
-              <li><a href="products.html">Products</a></li>
-              <li><a href="aboutus.html">About Us</a></li>
-              <li><a href="enquiry.html">Enquiry</a></li>
-              <li><a href="contact.html">Contact Us</a></li>
-            </ul>
-          </nav>
+    <div class="menu-overlay"></div>
+  <header>
+    <div class="container">
+      <div class="logo-title">
+        <img src="images/logo.jpg" alt="FZ Creation Bags Logo" class="logo">
+        <div class="title">
+          <h1>FZ Creation Bags</h1>
+          <span class="tagline">Precision. Quality. Innovation</span>
         </div>
-      </header>
-
+      </div>
+      <nav aria-label="Main Navigation">
+        <button class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-navigation">
+          <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </button>
+        <ul id="main-navigation" role="menu">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="aboutus.html">About Us</a></li>
+          <li><a href="enquiry.html">Enquiry</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
     <!-- Main Content Section -->
     <main>
       <section class="about-hero">
@@ -301,125 +301,9 @@ body {
     </div>
   </footer>
 <!-- Mobile Navigation Script -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const menuBtn = document.querySelector('.mobile-menu-btn');
-      const hamburgerIcon = document.querySelector('.hamburger-icon');
-      const navMenu = document.querySelector('nav ul');
-      const menuOverlay = document.querySelector('.menu-overlay');
-      
-      // Function to toggle menu state
-      function toggleMenu() {
-        const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
-        const newExpandedState = !isExpanded;
-        
-        // Update ARIA state
-        menuBtn.setAttribute('aria-expanded', newExpandedState.toString());
-        
-        // Toggle visual classes
-        navMenu.classList.toggle('show');
-        hamburgerIcon.classList.toggle('open');
-        menuOverlay.classList.toggle('show');
-        document.querySelector('nav').classList.toggle('active');
-        
-        // Prevent body scrolling when menu is open
-        if (newExpandedState) {
-          document.body.style.overflow = 'hidden';
-        } else {
-          document.body.style.overflow = '';
-        }
-        
-        // Announce menu state for screen readers
-        const menuState = newExpandedState ? 'opened' : 'closed';
-        menuBtn.setAttribute('aria-label', `Menu ${menuState}`);
-      }
-      
-      // Toggle menu on button click
-      menuBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        toggleMenu();
-      });
-      
-      // Close menu when clicking on overlay
-      menuOverlay.addEventListener('click', function() {
-        toggleMenu();
-      });
-      
-      // Close menu when clicking on a link
-      const navLinks = document.querySelectorAll('nav ul li a');
-      navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-          if (navMenu.classList.contains('show')) {
-            toggleMenu();
-          }
-        });
-        
-        // Add keyboard accessibility for menu items
-        link.setAttribute('role', 'menuitem');
-        link.addEventListener('keydown', function(e) {
-          // Close menu on Enter or Space after selecting an item
-          if ((e.key === 'Enter' || e.key === ' ') && navMenu.classList.contains('show')) {
-            e.preventDefault();
-            toggleMenu();
-            // Follow the link after closing menu
-            setTimeout(() => {
-              window.location.href = this.href;
-            }, 300);
-          }
-        });
-      });
-      
-      // Handle touch events better for mobile
-      navMenu.addEventListener('touchstart', function(e) {
-        e.stopPropagation();
-      }, { passive: true });
-      
-      // Add swipe to close functionality
-      let touchStartX = 0;
-      navMenu.addEventListener('touchstart', function(e) {
-        touchStartX = e.changedTouches[0].screenX;
-      }, { passive: true });
-      
-      navMenu.addEventListener('touchend', function(e) {
-        const touchEndX = e.changedTouches[0].screenX;
-        const diff = touchStartX - touchEndX;
-        
-        // If swiped left (for right-side menu)
-        if (diff > 50) {
-          toggleMenu();
-        }
-      }, { passive: true });
-      
-      // Adjust menu on window resize
-      window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-          if (navMenu.classList.contains('show')) {
-            toggleMenu(); // Close the menu
-          }
-          // Reset styles for desktop view
-          document.body.style.overflow = '';
-          menuBtn.setAttribute('aria-expanded', 'false');
-          menuBtn.setAttribute('aria-label', 'Toggle menu');
-        }
-      });
-      
-      // Add keyboard navigation support
-      menuBtn.addEventListener('keydown', function(e) {
-        // Toggle on Enter or Space
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggleMenu();
-        }
-      });
-      
-      // Allow Escape key to close the menu
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && navMenu.classList.contains('show')) {
-          toggleMenu();
-        }
-      });
-    });
-  </script>
+
 <script src="scroll-fade.js"></script>
+<script src="mobile-menu.js"></script>
+
   </body>
 </html>
