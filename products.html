@@ -591,7 +591,7 @@
       </div>
       <div class="footer-section contact">
         <h3>Contact Us</h3>
-        <p>Email: info@bagsite.com</p>
+        <p>Email: buisness@fzcreationbags.in</p>
         <p>Phone: +91 77159 76706</p>
         <p>Address: Sion Dharavi, Mumbai, Maharashtra, India</p>
       </div>
@@ -607,6 +607,50 @@
   <!-- Mobile Navigation Script -->
 
   <script src="mobile-menu.js"></script>
+  <style>
+    /* Scroll-Up Button */
+    #scrollUpBtn {
+    position: fixed;
+    bottom: 88px; /* Adjusted higher above WhatsApp icon */
+    right: 31px; /* Positioned on the right side */
+    width: 38px; /* Width of image */
+    height: 38px; /* Height of image */
+    border: none;
+    border-radius: 50%;
+    display: none; /* Hidden by default */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.3s, transform 0.3s;
+    background-image: url("/images/top.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+}
+
+#scrollUpBtn:hover {
+    transform: scale(1.1);
+}
+
+
+</style>
+
+<button id="scrollUpBtn"></button>
+
+<script>
+    const scrollUpBtn = document.getElementById("scrollUpBtn");
+
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 300) {
+            scrollUpBtn.style.display = "block"; // Show button after scrolling 300px
+        } else {
+            scrollUpBtn.style.display = "none"; // Hide when near the top
+        }
+    });
+
+    scrollUpBtn.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+</script>
 
 </body>
 
